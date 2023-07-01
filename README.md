@@ -18,7 +18,7 @@ Bavul is a project that collects and stores vulnerability information. It utiliz
 
 ## Features
 
-bavul offers the following features:
+Bavul offers the following features:
 
 - Collect and store vulnerability information from various sources
 - API service for retrieving vulnerability information
