@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: svc-configs
+data:
+  dbHost: mongodb
+  dbPort: "27017"
+  dbName: bavul
+  certPath: "/etc/certs"

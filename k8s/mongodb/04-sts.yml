@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+spec:
+  serviceName: mongodb
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      nodeSelector:
+        kubernetes.io/role: worker
+      containers:
+      - name: mongodb
+        image: mongo:4.4
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME_FILE
+            value: /etc/credentials/admin/MONGO_ROOT_USERNAME
+          - name: MONGO_INITDB_ROOT_PASSWORD_FILE
+            value: /etc/credentials/admin/MONGO_ROOT_PASSWORD
+          - name: MONGO_INITDB_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: mongodb-configs
+                key: dbName
+          - name: MONGO_INITDB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-secrets
+                key: dbUser
+          - name: MONGO_INITDB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-secrets
+                key: dbPass
+        volumeMounts:
+        - name: credentials
+          mountPath: /etc/credentials
+          readOnly: true
+        - name: mongo-data
+          mountPath: /data/db
+        - name: mongo-initdb
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: mongo-data
+        persistentVolumeClaim:
+          claimName: mongodb-pvc
+      - name: credentials
+        secret:
+          secretName: mongodb-secrets
+          items:
+          - key: username
+            path: admin/MONGO_ROOT_USERNAME
+            mode: 0444
+          - key: password
+            path: admin/MONGO_ROOT_PASSWORD
+            mode: 0444
+      - name: mongo-initdb
+        configMap:
+          name: mongodb-scripts
+          items:
+          - key: createUser.sh
+            path: createUser.sh
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+spec:
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017
+  selector:
+    app: database

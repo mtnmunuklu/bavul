@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package messages;
+
+option go_package = "./pb";
+
+message User {
+    string id = 1;
+    string name= 2;
+    string email = 3;
+    string role = 4;
+    int64 created = 5;
+    int64 updated = 6;
+}
+
+message SignUpRequest {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+}
+
+message SignInRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message SignInResponse {
+    User user = 1;
+    string token = 2;
+}
+
+message GetUserRequest {
+    string email = 1;
+}
+
+message DeleteUserRequest {
+    string email = 1;
+}
+
+message DeleteUserResponse {
+    string email = 1;
+}
+
+message ChangeUserRoleRequest {
+    string email = 1;
+    string role = 2;
+}
+
+message GetUserRoleRequest {
+    string id = 1;
+}
+
+message GetUserRoleResponse {
+    string role = 1;
+}
+
+message UpdateUserPasswordRequest {
+    string email = 1;
+    string password = 2;
+    string newPassword = 3;
+}
+
+message UpdateUserEmailRequest {
+    string email = 1;
+    string newEmail = 2;
+    string password = 3;
+}
+
+message UpdateUserNameRequest {
+    string email = 1;
+    string name = 2;
+    string password = 3;
+}
+
+message ListUsersRequest {}
+
+service AuthService {
+    rpc SignUp(SignUpRequest) returns (User);
+    rpc SignIn(SignInRequest) returns (SignInResponse);
+    rpc GetUser(GetUserRequest) returns (User);
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+    rpc ChangeUserRole(ChangeUserRoleRequest) returns (User);
+    rpc GetUserRole(GetUserRoleRequest) returns (GetUserRoleResponse);
+    rpc UpdateUserPassword(UpdateUserPasswordRequest) returns (User);
+    rpc UpdateUserEmail(UpdateUserEmailRequest) returns (User);
+    rpc UpdateUserName(UpdateUserNameRequest) returns (User);
+    rpc ListUsers(ListUsersRequest) returns (stream User);
+}

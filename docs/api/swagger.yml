@@ -1,0 +1,411 @@
+swagger: "2.0"
+info:
+  description: "Provides to crawl and categorize URL addresses."
+  version: "1.0.0"
+  title: "Bavul API"
+  contact:
+    email: "mtnmunuklu@gmail.com"
+  license:
+    name: "MIT"
+    url: "https://github.com/mtnmunuklu/bavul/blob/main/LICENSE"
+host: "api.bavul.com"
+tags:
+- name: "auth"
+  description: "Authentication api"
+schemes:
+- "https"
+paths:
+  /signup:
+    put:
+      tags:
+      - "auth"
+      summary: "Performs the user registration process"
+      description: ""
+      operationId: "signup"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Signup object"
+        required: true
+        schema:
+          $ref: "#/definitions/SignUp"
+      responses:
+        "201":
+            description: "Created"
+            schema:
+              $ref: "#/definitions/User"
+        "400":
+            description: "Bad request"
+            schema:
+              $ref: "#/definitions/Error"
+        "422":
+            description: "Unprocessable entity"
+            schema:
+              $ref: "#/definitions/Error"
+  /signin:
+    post:
+      tags:
+      - "auth"
+      summary: "Performs the user login process"
+      description: ""
+      operationId: "signin"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Signin object"
+        required: true
+        schema:
+          $ref: "#/definitions/SignIn"
+      responses:
+        "200":
+            description: "Ok"
+            schema:
+              $ref: "#/definitions/SignInResponse"
+        "400":
+            description: "Bad request"
+            schema:
+              $ref: "#/definitions/Error"
+        "422":
+            description: "Unprocessable entity"
+            schema:
+              $ref: "#/definitions/Error"
+      security:
+      - api_key: []
+  /user:
+    get:
+      tags:
+      - "auth"
+      summary: "Performs return the user by email"
+      description: ""
+      operationId: "getUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Email"
+        in: "header"
+        description: "Email address"
+        required: true
+        type: "string"
+      responses:
+        "200":
+            description: "Ok"
+            schema:
+              $ref: "#/definitions/User"
+        "400":
+            description: "Bad request"
+            schema:
+              $ref: "#/definitions/Error"
+        "422":
+            description: "Unprocessable entity"
+            schema:
+              $ref: "#/definitions/Error"
+      security:
+      - api_key: []
+    delete:
+      tags:
+      - "auth"
+      summary: "Performs delete the user"
+      description: ""
+      operationId: "deleteUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Email"
+        in: "header"
+        description: "Email address"
+        required: true
+        type: "string"
+      responses:
+        "200":
+            description: "Ok"
+            schema:
+              $ref: "#/definitions/DeleteUserResponse"
+        "400":
+            description: "Bad request"
+            schema:
+              $ref: "#/definitions/Error"
+        "422":
+            description: "Unprocessable entity"
+            schema:
+              $ref: "#/definitions/Error"
+      security:
+      - api_key: []
+    patch:
+      tags:
+      - "auth"
+      summary: "Performs change the user role"
+      description: ""
+      operationId: "changeUserRole"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User role change object"
+        required: true
+        schema:
+          $ref: "#/definitions/ChangeUserRole"
+      responses:
+        "200":
+            description: "Ok"
+            schema:
+              $ref: "#/definitions/User"
+        "400":
+            description: "Bad request"
+            schema:
+              $ref: "#/definitions/Error"
+        "422":
+            description: "Unprocessable entity"
+            schema:
+              $ref: "#/definitions/Error"
+      security:
+      - api_key: []
+  /user_pu:
+    post:
+      tags:
+      - "auth"
+      summary: "Performs update the user password"
+      description: ""
+      operationId: "updateUserPassword"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User password update object"
+        required: true
+        schema:
+          $ref: "#/definitions/UpdateUserPassword"
+      responses:
+        "200":
+            description: "Ok"
+            schema:
+              $ref: "#/definitions/User"
+        "400":
+            description: "Bad request"
+            schema:
+              $ref: "#/definitions/Error"
+        "422":
+            description: "Unprocessable entity"
+            schema:
+              $ref: "#/definitions/Error"
+      security:
+      - api_key: []
+  /user_eu:
+    post:
+      tags:
+      - "auth"
+      summary: "Performs update the user email"
+      description: ""
+      operationId: "updateUserEmail"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User email update object"
+        required: true
+        schema:
+          $ref: "#/definitions/UpdateUserEmail"
+      responses:
+        "200":
+            description: "Ok"
+            schema:
+              $ref: "#/definitions/User"
+        "400":
+            description: "Bad request"
+            schema:
+              $ref: "#/definitions/Error"
+        "422":
+            description: "Unprocessable entity"
+            schema:
+              $ref: "#/definitions/Error"
+      security:
+      - api_key: []
+  /user_nu:
+    post:
+      tags:
+      - "auth"
+      summary: "Performs update the user name"
+      description: ""
+      operationId: "updateUserName"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User name update object"
+        required: true
+        schema:
+          $ref: "#/definitions/UpdateUserName"
+      responses:
+        "200":
+            description: "Ok"
+            schema:
+              $ref: "#/definitions/User"
+        "400":
+            description: "Bad request"
+            schema:
+              $ref: "#/definitions/Error"
+        "422":
+            description: "Unprocessable entity"
+            schema:
+              $ref: "#/definitions/Error"
+      security:
+      - api_key: []
+  /users:
+    get:
+      tags:
+      - "auth"
+      summary: "Performs listing all users"
+      description: ""
+      operationId: "getUsers"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+            description: "Ok"
+            schema:
+              type: "array"
+              items:
+                $ref: "#/definitions/User"
+        "400":
+            description: "Bad request"
+            schema:
+              $ref: "#/definitions/Error"
+        "422":
+            description: "Unprocessable entity"
+            schema:
+              $ref: "#/definitions/Error"
+      security:
+      - api_key: []
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+definitions:
+  User:
+    type: "object"
+    required: 
+      - id
+      - name
+      - email
+      - role
+      - created
+      - updated
+    properties:
+      id:
+        type: "string"
+      name:
+        type: "string"
+      email:
+        type: "string"
+      role:
+        type: "string"
+      created:
+        type: "integer"
+        format: "int64"
+      updated:
+        type: "integer"
+        format: "int64"
+  SignUp:
+    type: "object"
+    required: 
+      - name
+      - email
+      - password
+    properties:
+      name:
+        type: "string"
+      email:
+        type: "string"
+      password:
+        type: "string"
+  SignIn:
+    type: "object"
+    required: 
+      - email
+      - password
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+  SignInResponse:
+    type: "object"
+    required: 
+      - user
+      - token
+    properties:
+      user:
+        $ref: "#/definitions/User"
+      token:
+        type: "string"
+  UpdateUserPassword:
+    type: "object"
+    required: 
+      - email
+      - password
+      - newPassword
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+      newPassword:
+        type: "string"
+  UpdateUserEmail:
+    type: "object"
+    required: 
+      - email
+      - newEmail
+      - password
+    properties:
+      email:
+        type: "string"
+      newEmail:
+        type: "string"
+      password:
+        type: "string"
+  UpdateUserName:
+    type: "object"
+    required: 
+      - email
+      - name
+      - password
+    properties:
+      email:
+        type: "string"
+      name:
+        type: "string"
+      password:
+        type: "string"
+  DeleteUserResponse:
+    type: "object"
+    required: 
+      - email
+    properties:
+      email:
+        type: "string"
+  ChangeUserRole:
+    type: "object"
+    required: 
+      - email
+      - role
+    properties:
+      email:
+        type: "string"
+      role:
+        type: "string"
+  Error:
+    type: "object"
+    required:
+      - error
+    properties:
+      error:
+        type: "string"
