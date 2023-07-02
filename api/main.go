@@ -4,26 +4,23 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/mtnmunuklu/bavul/api/handlers"
+	"github.com/mtnmunuklu/bavul/api/middlewares"
 	"github.com/mtnmunuklu/bavul/api/routes"
 	"github.com/mtnmunuklu/bavul/pb"
 	"github.com/mtnmunuklu/bavul/security"
 
-	"github.com/gorilla/mux"
+	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 )
 
 var (
-	port      int
-	local     bool
-	authAddr  string
-	catAddr   string
-	crawlAddr string
-	catzeAddr string
+	port     int
+	local    bool
+	authAddr string
 )
 
 func init() {
@@ -42,8 +39,8 @@ func main() {
 	}
 
 	// for secure communication
-	cert_path := os.Getenv("CERT_PATH")
-	tlsCredentials, err := security.LoadCATLSCredentials(cert_path)
+	certPath := os.Getenv("CERT_PATH")
+	tlsCredentials, err := security.LoadCATLSCredentials(certPath)
 	if err != nil {
 		log.Fatal("cannot load TLS credentials: ", err)
 	}
@@ -59,10 +56,12 @@ func main() {
 	authHandlers := handlers.NewAuthHandlers(autSvcClient)
 	authRoutes := routes.NewAuthRoutes(authHandlers)
 
-	router := mux.NewRouter().StrictSlash(true)
-	routes.Install(router, authRoutes)
+	app := fiber.New()
+	app.Use(middlewares.CORS())
+
+	routes.Install(app, authRoutes)
 
 	log.Printf("API service running on [::]:%d\n", port)
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), routes.WithCORS(router)))
+	log.Fatal(app.Listen(fmt.Sprintf(":%d", port)))
 }

@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/mtnmunuklu/bavul/api/handlers"
 )
 
@@ -10,56 +11,67 @@ import (
 func NewAuthRoutes(authHandlers handlers.AuthHandlers) []*Route {
 	return []*Route{
 		{
-			Path:    "/signup",
-			Method:  http.MethodPut,
-			Handler: authHandlers.SignUp,
+			Method: http.MethodPut,
+			Path:   "/signup",
+			Handler: func(c *fiber.Ctx) error {
+				return authHandlers.SignUp(c)
+			},
 		},
 		{
-			Path:    "/signin",
-			Method:  http.MethodPost,
-			Handler: authHandlers.SignIn,
+			Method: http.MethodPost,
+			Path:   "/signin",
+			Handler: func(c *fiber.Ctx) error {
+				return authHandlers.SignIn(c)
+			},
 		},
 		{
-			Path:         "/user",
-			Method:       http.MethodGet,
-			Handler:      authHandlers.GetUser,
-			AuthRequired: true,
+			Method: http.MethodGet,
+			Path:   "/user",
+			Handler: func(c *fiber.Ctx) error {
+				return authHandlers.GetUser(c)
+			},
 		},
 		{
-			Path:         "/user",
-			Method:       http.MethodDelete,
-			Handler:      authHandlers.DeleteUser,
-			AuthRequired: true,
+			Method: http.MethodDelete,
+			Path:   "/user",
+			Handler: func(c *fiber.Ctx) error {
+				return authHandlers.DeleteUser(c)
+			},
 		},
 		{
-			Path:         "/user_rc",
-			Method:       http.MethodPost,
-			Handler:      authHandlers.ChangeUserRole,
-			AuthRequired: true,
+			Method: http.MethodPost,
+			Path:   "/user_rc",
+			Handler: func(c *fiber.Ctx) error {
+				return authHandlers.ChangeUserRole(c)
+			},
 		},
 		{
-			Path:         "/user_pu",
-			Method:       http.MethodPost,
-			Handler:      authHandlers.UpdateUserPassword,
-			AuthRequired: true,
+			Method: http.MethodPost,
+			Path:   "/user_pu",
+			Handler: func(c *fiber.Ctx) error {
+				return authHandlers.UpdateUserPassword(c)
+			},
 		},
 		{
-			Path:         "/user_eu",
-			Method:       http.MethodPost,
-			Handler:      authHandlers.UpdateUserEmail,
-			AuthRequired: true,
+			Method: http.MethodPost,
+			Path:   "/user_eu",
+			Handler: func(c *fiber.Ctx) error {
+				return authHandlers.UpdateUserEmail(c)
+			},
 		},
 		{
-			Path:         "/user_nu",
-			Method:       http.MethodPost,
-			Handler:      authHandlers.UpdateUserName,
-			AuthRequired: true,
+			Method: http.MethodPost,
+			Path:   "/user_nu",
+			Handler: func(c *fiber.Ctx) error {
+				return authHandlers.UpdateUserName(c)
+			},
 		},
 		{
-			Path:         "/users",
-			Method:       http.MethodGet,
-			Handler:      authHandlers.GetUsers,
-			AuthRequired: true,
+			Method: http.MethodGet,
+			Path:   "/users",
+			Handler: func(c *fiber.Ctx) error {
+				return authHandlers.GetUsers(c)
+			},
 		},
 	}
 }

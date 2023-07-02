@@ -1,58 +1,56 @@
 package util
 
 import (
-	"encoding/json"
 	"errors"
-	"net/http"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/mtnmunuklu/bavul/security"
 )
 
-// Contains error codes for api.
+// Contains error codes for API.
 var (
 	ErrEmptyBody    = errors.New("body can't be empty")
 	ErrEmptyHeader  = errors.New("header can't be empty")
-	ErrExistURL     = errors.New("url already exist")
+	ErrExistURL     = errors.New("URL already exists")
 	ErrUnauthorized = errors.New("unauthorized operation")
 )
 
-// Error
+// JError represents an error structure.
 type JError struct {
 	Error string `json:"error"`
 }
 
-// WriteAsJson provides return the response in json format.
-func WriteAsJson(w http.ResponseWriter, statusCode int, data interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-	_ = json.NewEncoder(w).Encode(data)
+// WriteAsJSON writes the response in JSON format.
+func WriteAsJSON(c *fiber.Ctx, statusCode int, data interface{}) error {
+	c.Set("Content-Type", "application/json")
+	return c.Status(statusCode).JSON(data)
 }
 
-// WriteError provides return the related error in json format.
-func WriteError(w http.ResponseWriter, statusCode int, err error) {
+// WriteError writes the error response in JSON format.
+func WriteError(c *fiber.Ctx, statusCode int, err error) error {
 	e := "error"
 	if err != nil {
 		e = err.Error()
 	}
-	WriteAsJson(w, statusCode, JError{e})
+	return WriteAsJSON(c, statusCode, JError{Error: e})
 }
 
-// GetUserIdFromToken provides return the user id in the token.
-func GetUserIdFromToken(r *http.Request) (string, error) {
-	token, err := security.ExtractToken(r)
+// GetUserIDFromToken returns the user ID from the token.
+func GetUserIDFromToken(c *fiber.Ctx) (string, error) {
+	token, err := security.ExtractToken(c)
 	if err != nil {
 		return "", err
 	}
 
-	userId, err := security.ValidateToken(token)
+	userID, err := security.ValidateToken(token)
 	if err != nil {
 		return "", err
 	}
 
-	return userId, nil
+	return userID, nil
 }
 
-// CheckUserIsAdmin checks if user is admin.
+// CheckUserIsAdmin checks if the user is an admin.
 func CheckUserIsAdmin(role string) bool {
 	return role == "admin"
 }

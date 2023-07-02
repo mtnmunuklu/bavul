@@ -2,42 +2,58 @@ package middlewares
 
 import (
 	"log"
-	"net/http"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/mtnmunuklu/bavul/api/util"
 	"github.com/mtnmunuklu/bavul/security"
 )
 
 // LogRequests provides logging of incoming requests.
-func LogRequests(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		t := time.Now()
-		next(w, r)
-		log.Printf(`{"proto": "%s", "method": "%s", "route": "%s%s", "request_time": "%v"}`, r.Proto, r.Method, r.Host, r.URL.Path, time.Since(t))
-	}
+func LogRequests(c *fiber.Ctx) error {
+	t := time.Now()
+	err := c.Next()
+	log.Printf(`{"proto": "%s", "method": "%s", "route": "%s%s", "request_time": "%v"}`, c.Protocol(), c.Method(), c.Hostname(), c.Path(), time.Since(t))
+	return err
 }
 
-// Authenticate provides the authentication process.
-func Authenticate(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		tokenString, err := security.ExtractToken(r)
+// Authenticate provides the authentication process middleware.
+func Authenticate(next fiber.Handler) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		tokenString, err := security.ExtractToken(c)
 		if err != nil {
-			util.WriteError(w, http.StatusUnauthorized, util.ErrUnauthorized)
-			return
+			util.WriteError(c, fiber.StatusUnauthorized, util.ErrUnauthorized)
+			return nil
 		}
+
 		token, err := security.ParseToken(tokenString)
 		if err != nil {
 			log.Println("error on parse token:", err.Error())
-			util.WriteError(w, http.StatusUnauthorized, util.ErrUnauthorized)
-			return
-		}
-		if !token.Valid {
-			log.Println("invalid token:", tokenString)
-			util.WriteError(w, http.StatusUnauthorized, util.ErrUnauthorized)
-			return
+			util.WriteError(c, fiber.StatusUnauthorized, util.ErrUnauthorized)
+			return nil
 		}
 
-		next(w, r)
+		if !token.Valid {
+			log.Println("invalid token:", tokenString)
+			util.WriteError(c, fiber.StatusUnauthorized, util.ErrUnauthorized)
+			return nil
+		}
+
+		return next(c)
+	}
+}
+
+// CORS provides Cross-Origin Resource Sharing middleware.
+func CORS() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		c.Set("Access-Control-Allow-Origin", "*")
+		c.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+		c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if c.Method() == fiber.MethodOptions {
+			return c.SendStatus(fiber.StatusNoContent)
+		}
+
+		return c.Next()
 	}
 }
