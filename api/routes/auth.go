@@ -37,6 +37,7 @@ func NewAuthRoutes(authHandlers handlers.AuthHandlers) []*Route {
 			Handler: func(c *fiber.Ctx) error {
 				return authHandlers.DeleteUser(c)
 			},
+			AuthRequired: true,
 		},
 		{
 			Method: http.MethodPost,
@@ -44,6 +45,7 @@ func NewAuthRoutes(authHandlers handlers.AuthHandlers) []*Route {
 			Handler: func(c *fiber.Ctx) error {
 				return authHandlers.ChangeUserRole(c)
 			},
+			AuthRequired: true,
 		},
 		{
 			Method: http.MethodPost,
@@ -51,6 +53,7 @@ func NewAuthRoutes(authHandlers handlers.AuthHandlers) []*Route {
 			Handler: func(c *fiber.Ctx) error {
 				return authHandlers.UpdateUserPassword(c)
 			},
+			AuthRequired: true,
 		},
 		{
 			Method: http.MethodPost,
@@ -58,6 +61,7 @@ func NewAuthRoutes(authHandlers handlers.AuthHandlers) []*Route {
 			Handler: func(c *fiber.Ctx) error {
 				return authHandlers.UpdateUserEmail(c)
 			},
+			AuthRequired: true,
 		},
 		{
 			Method: http.MethodPost,
@@ -65,6 +69,7 @@ func NewAuthRoutes(authHandlers handlers.AuthHandlers) []*Route {
 			Handler: func(c *fiber.Ctx) error {
 				return authHandlers.UpdateUserName(c)
 			},
+			AuthRequired: true,
 		},
 		{
 			Method: http.MethodGet,
@@ -72,6 +77,7 @@ func NewAuthRoutes(authHandlers handlers.AuthHandlers) []*Route {
 			Handler: func(c *fiber.Ctx) error {
 				return authHandlers.GetUsers(c)
 			},
+			AuthRequired: true,
 		},
 	}
 }
