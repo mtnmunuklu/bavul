@@ -7,12 +7,13 @@ import (
 	"os"
 
 	"github.com/mtnmunuklu/bavul/api/handlers"
-	"github.com/mtnmunuklu/bavul/api/middlewares"
 	"github.com/mtnmunuklu/bavul/api/routes"
 	"github.com/mtnmunuklu/bavul/pb"
 	"github.com/mtnmunuklu/bavul/security"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 )
@@ -57,7 +58,8 @@ func main() {
 	authRoutes := routes.NewAuthRoutes(authHandlers)
 
 	app := fiber.New()
-	app.Use(middlewares.CORS())
+	app.Use(cors.New())
+	app.Use(logger.New())
 
 	routes.Install(app, authRoutes)
 
