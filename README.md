@@ -1,11 +1,3 @@
-<p align="center">
-  <img width="350" height="350" src="images/logo.png">
-</p>
-
-<p align="center">
-<a href="https://pkg.go.dev/github.com/mtnmunuklu/bavul"><img src="https://img.shields.io/badge/%F0%9F%93%9A%20godoc-pkg-informational.svg" alt="Go Doc"></a> <a href="https://goreportcard.com/report/github.com/mtnmunuklu/bavul"><img src="https://img.shields.io/badge/%F0%9F%93%9D%20goreport-A+-success.svg" alt="Go Report"></a> <a href="https://travis-ci.com/"><img src="https://img.shields.io/badge/%E2%9A%99%20build-X-success.svg" alt="Build Status"></a>
-</p>
-
 # Bavul <sub><small><small>(Be aware of vulnerabilities)</small></small></sub>
 Bavul is a project that collects and stores vulnerability information. It utilizes **Golang**, **Docker**, **Kubernetes**, **Hugo-site**, **Traefik**, **grpc-go**, and **Protocol Buffers** technologies.
 
@@ -14,6 +6,7 @@ Bavul is a project that collects and stores vulnerability information. It utiliz
 * [Features](#features)
 * [Setup](#setup)
 * [Usage](#usage)
+* [Sponsors](#sponsors)
 * [License](#license)
 
 ## Features
@@ -69,6 +62,25 @@ To understand the features of each service, the available endpoints, how to make
 
 You can also access the documents describing the software structure of each service under the `docs` folder.
 
+## Sponsors
+
+We would like to express our gratitude to the following sponsors for their generous support:
+
+<div align="center">
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <a href="https://github.com/alisentas" style="text-align: center; margin-right: 20px;">
+      <img src="https://github.com/alisentas.png" alt="Sponsor 1" width="50" style="border-radius: 50%;">
+      <br>
+    </a>
+    <a href="https://github.com/furkansekerci" style="text-align: center; margin-right: 20px;">
+      <img src="https://github.com/furkansekerci.png" alt="Sponsor 2" width="50" style="border-radius: 50%;">
+      <br>
+    </a>
+  </div>
+</div>
+
+If you are interested in becoming a sponsor, please visit our [GitHub Sponsors](https://github.com/sponsors) page.
+
 ## License
 
-Alterix is licensed under the MIT License. See [LICENSE](LICENSE) for the full text of the license.
+Bavul is licensed under the MIT License. See [LICENSE](LICENSE) for the full text of the license.
