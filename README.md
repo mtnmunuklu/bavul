@@ -67,16 +67,12 @@ You can also access the documents describing the software structure of each serv
 We would like to express our gratitude to the following sponsors for their generous support:
 
 <div align="center">
-  <div style="display: flex; justify-content: center; align-items: center;">
-    <a href="https://github.com/alisentas" style="text-align: center; margin-right: 20px;">
-      <img src="https://github.com/alisentas.png" alt="Sponsor 1" width="50" style="border-radius: 50%;">
-      <br>
-    </a>
-    <a href="https://github.com/furkansekerci" style="text-align: center; margin-right: 20px;">
-      <img src="https://github.com/furkansekerci.png" alt="Sponsor 2" width="50" style="border-radius: 50%;">
-      <br>
-    </a>
-  </div>
+  <a href="https://github.com/alisentas">
+    <img src="https://github.com/alisentas.png" alt="tolgaakkapulu" width="50" height="50" style="border-radius: 50%">
+  </a>
+  <a href="https://github.com/furkansekerci">
+    <img src="https://github.com/furkansekerci.png" alt="mkdemir" width="50" height="50" style="border-radius: 50%">
+  </a>
 </div>
 
 If you are interested in becoming a sponsor, please visit our [GitHub Sponsors](https://github.com/sponsors) page.
