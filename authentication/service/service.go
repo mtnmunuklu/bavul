@@ -17,12 +17,12 @@ import (
 
 // AuthService provides usersRepository for authentication service.
 type AuthService struct {
-	usersRepository repository.UsersRepository
+	userRepository repository.UserRepository
 }
 
 // NewAuthService creates a new AuthService instance.
-func NewAuthService(usersRepository repository.UsersRepository) pb.AuthServiceServer {
-	return &AuthService{usersRepository: usersRepository}
+func NewAuthService(userRepository repository.UserRepository) pb.AuthServiceServer {
+	return &AuthService{userRepository: userRepository}
 }
 
 // SignUp performs the user registration process.
@@ -36,7 +36,7 @@ func (s *AuthService) SignUp(ctx context.Context, req *pb.SignUpRequest) (*pb.Us
 	if normalizedEmail == "" {
 		return nil, util.ErrEmptyEmail
 	}
-	found, err := s.usersRepository.GetByEmail(normalizedEmail)
+	found, err := s.userRepository.GetByEmail(normalizedEmail)
 
 	if err == mgo.ErrNotFound {
 		user := new(models.User)
@@ -54,11 +54,11 @@ func (s *AuthService) SignUp(ctx context.Context, req *pb.SignUpRequest) (*pb.Us
 		}
 		user.Created = time.Now()
 		user.Updated = time.Now()
-		err := s.usersRepository.Save(user)
+		err := s.userRepository.Save(user)
 		if err != nil {
 			return nil, util.ErrCreateUser
 		}
-		return user.ToProtoBuffer(), nil
+		return user.ToProto(), nil
 	}
 
 	if found == nil {
@@ -75,7 +75,7 @@ func (s *AuthService) SignIn(ctx context.Context, req *pb.SignInRequest) (*pb.Si
 		return nil, util.ErrEmptyEmail
 	}
 
-	user, err := s.usersRepository.GetByEmail(normalizedEmail)
+	user, err := s.userRepository.GetByEmail(normalizedEmail)
 	if err != nil {
 		return nil, util.ErrNotFoundEmail
 	}
@@ -90,7 +90,7 @@ func (s *AuthService) SignIn(ctx context.Context, req *pb.SignInRequest) (*pb.Si
 		return nil, util.ErrFailedSignIn
 	}
 
-	return &pb.SignInResponse{User: user.ToProtoBuffer(), Token: token}, nil
+	return &pb.SignInResponse{User: user.ToProto(), Token: token}, nil
 }
 
 // GetUser performs return the user by id.
@@ -100,12 +100,12 @@ func (s *AuthService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 		return nil, util.ErrEmptyEmail
 	}
 
-	found, err := s.usersRepository.GetByEmail(normalizedEmail)
+	found, err := s.userRepository.GetByEmail(normalizedEmail)
 	if err != nil {
 		return nil, util.ErrNotFoundEmail
 	}
 
-	return found.ToProtoBuffer(), nil
+	return found.ToProto(), nil
 }
 
 // DeleteUser performs delete the user.
@@ -115,12 +115,12 @@ func (s *AuthService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 		return nil, util.ErrEmptyEmail
 	}
 
-	user, err := s.usersRepository.GetByEmail(normalizedEmail)
+	user, err := s.userRepository.GetByEmail(normalizedEmail)
 	if err != nil {
 		return nil, util.ErrNotFoundEmail
 	}
 
-	err = s.usersRepository.DeleteById(user.Id.Hex())
+	err = s.userRepository.DeleteById(user.Id.Hex())
 	if err != nil {
 		return nil, util.ErrDeleteUser
 	}
@@ -135,7 +135,7 @@ func (s *AuthService) ChangeUserRole(ctx context.Context, req *pb.ChangeUserRole
 		return nil, util.ErrEmptyEmail
 	}
 
-	user, err := s.usersRepository.GetByEmail(req.GetEmail())
+	user, err := s.userRepository.GetByEmail(req.GetEmail())
 	if err != nil {
 		return nil, util.ErrNotFoundEmail
 	}
@@ -148,13 +148,13 @@ func (s *AuthService) ChangeUserRole(ctx context.Context, req *pb.ChangeUserRole
 	if user.Role != req.GetRole() {
 		user.Role = req.GetRole()
 		user.Updated = time.Now()
-		err = s.usersRepository.Update(user)
+		err = s.userRepository.Update(user)
 		if err != nil {
 			return nil, util.ErrUpdateUser
 		}
 	}
 
-	return user.ToProtoBuffer(), nil
+	return user.ToProto(), nil
 }
 
 // GetUserRole performs return the user role by id.
@@ -163,7 +163,7 @@ func (s *AuthService) GetUserRole(ctx context.Context, req *pb.GetUserRoleReques
 		return nil, util.ErrInvalidUserId
 	}
 
-	user, err := s.usersRepository.GetById(req.GetId())
+	user, err := s.userRepository.GetById(req.GetId())
 	if err != nil {
 		return nil, util.ErrNotFoundUserId
 	}
@@ -178,7 +178,7 @@ func (s *AuthService) UpdateUserPassword(ctx context.Context, req *pb.UpdateUser
 		return nil, util.ErrEmptyEmail
 	}
 
-	user, err := s.usersRepository.GetByEmail(normalizedEmail)
+	user, err := s.userRepository.GetByEmail(normalizedEmail)
 	if err != nil {
 		return nil, util.ErrNotFoundEmail
 	}
@@ -209,12 +209,12 @@ func (s *AuthService) UpdateUserPassword(ctx context.Context, req *pb.UpdateUser
 	if user.Password != req.GetNewPassword() {
 		user.Password = req.GetNewPassword()
 		user.Updated = time.Now()
-		err = s.usersRepository.Update(user)
+		err = s.userRepository.Update(user)
 		if err != nil {
 			return nil, util.ErrUpdateUser
 		}
 	}
-	return user.ToProtoBuffer(), nil
+	return user.ToProto(), nil
 }
 
 // UpdateUser performs update the password.
@@ -223,7 +223,7 @@ func (s *AuthService) UpdateUserEmail(ctx context.Context, req *pb.UpdateUserEma
 	if normalizedEmail == "" {
 		return nil, util.ErrEmptyEmail
 	}
-	user, err := s.usersRepository.GetByEmail(normalizedEmail)
+	user, err := s.userRepository.GetByEmail(normalizedEmail)
 	if err != nil {
 		return nil, util.ErrNotFoundEmail
 	}
@@ -247,13 +247,13 @@ func (s *AuthService) UpdateUserEmail(ctx context.Context, req *pb.UpdateUserEma
 	if user.Email != req.GetNewEmail() {
 		user.Email = req.GetNewEmail()
 		user.Updated = time.Now()
-		err = s.usersRepository.Update(user)
+		err = s.userRepository.Update(user)
 		if err != nil {
 			return nil, util.ErrUpdateUser
 		}
 	}
 
-	return user.ToProtoBuffer(), nil
+	return user.ToProto(), nil
 }
 
 // UpdateUser performs update the username.
@@ -262,7 +262,7 @@ func (s *AuthService) UpdateUserName(ctx context.Context, req *pb.UpdateUserName
 	if normalizedEmail == "" {
 		return nil, util.ErrEmptyEmail
 	}
-	user, err := s.usersRepository.GetByEmail(normalizedEmail)
+	user, err := s.userRepository.GetByEmail(normalizedEmail)
 	if err != nil {
 		return nil, util.ErrNotFoundEmail
 	}
@@ -285,23 +285,23 @@ func (s *AuthService) UpdateUserName(ctx context.Context, req *pb.UpdateUserName
 	if user.Name != req.GetEmail() {
 		user.Name = req.GetName()
 		user.Updated = time.Now()
-		err = s.usersRepository.Update(user)
+		err = s.userRepository.Update(user)
 		if err != nil {
 			return nil, util.ErrUpdateUser
 		}
 	}
 
-	return user.ToProtoBuffer(), nil
+	return user.ToProto(), nil
 }
 
 // ListUser list all users.
 func (s *AuthService) ListUsers(req *pb.ListUsersRequest, stream pb.AuthService_ListUsersServer) error {
-	users, err := s.usersRepository.GetAll()
+	users, err := s.userRepository.GetAll()
 	if err != nil {
 		return util.ErrNotPerformedOperation
 	}
 	for _, user := range users {
-		err := stream.Send(user.ToProtoBuffer())
+		err := stream.Send(user.ToProto())
 		if err != nil {
 			return util.ErrNotPerformedOperation
 		}

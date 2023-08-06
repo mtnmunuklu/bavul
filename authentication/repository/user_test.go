@@ -26,8 +26,8 @@ func init() {
 	conn, _ := db.NewConnection(cfg)
 	defer conn.Close()
 
-	r := NewUsersRepository(conn)
-	err = r.(*URepository).DeleteAll()
+	r := NewUserRepository(conn)
+	err = r.(*userRepository).DeleteAll()
 	if err != nil && err.Error() != "ns not found" {
 		log.Panicln(err)
 	}
@@ -53,7 +53,7 @@ func TestUsersRepositorySave(t *testing.T) {
 		Updated:  time.Now(),
 	}
 
-	r := NewUsersRepository(conn)
+	r := NewUserRepository(conn)
 	err = r.Save(user)
 	assert.NoError(t, err)
 
@@ -81,7 +81,7 @@ func TestUsersRepositoryGetById(t *testing.T) {
 		Updated:  time.Now(),
 	}
 
-	r := NewUsersRepository(conn)
+	r := NewUserRepository(conn)
 	err = r.Save(user)
 	assert.NoError(t, err)
 
@@ -117,7 +117,7 @@ func TestUsersRepositoryGetByEmail(t *testing.T) {
 		Updated:  time.Now(),
 	}
 
-	r := NewUsersRepository(conn)
+	r := NewUserRepository(conn)
 	err = r.Save(user)
 	assert.NoError(t, err)
 
@@ -153,7 +153,7 @@ func TestUsersRepositoryUpdate(t *testing.T) {
 		Updated:  time.Now(),
 	}
 
-	r := NewUsersRepository(conn)
+	r := NewUserRepository(conn)
 	err = r.Save(user)
 	assert.NoError(t, err)
 
@@ -189,7 +189,7 @@ func TestUsersRepositoryDelete(t *testing.T) {
 		Updated:  time.Now(),
 	}
 
-	r := NewUsersRepository(conn)
+	r := NewUserRepository(conn)
 	err = r.Save(user)
 	assert.NoError(t, err)
 
@@ -225,7 +225,7 @@ func TestUsersRepositoryGetAll(t *testing.T) {
 		Updated:  time.Now(),
 	}
 
-	r := NewUsersRepository(conn)
+	r := NewUserRepository(conn)
 	err = r.Save(user)
 	assert.NoError(t, err)
 

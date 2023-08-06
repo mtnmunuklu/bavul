@@ -46,7 +46,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	usersRepository := repository.NewUsersRepository(conn)
+	usersRepository := repository.NewUserRepository(conn)
 	authService := service.NewAuthService(usersRepository)
 
 	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
