@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package messages;
+
+option go_package = "./pb";
+
+message CVE {
+  string id = 1;
+  string cve_id = 2;
+  string description = 3;
+  string severity = 4;
+  string product = 5;
+  string vendor = 6;
+  repeated string links = 7;
+  int64 published = 8;
+  int64 modified = 9;
+}
+
+message AddCVERequest{
+  string cve_id = 1;
+  string description = 2;
+  string severity = 3;
+  string product = 4;
+  string vendor = 5;
+  repeated string links = 6;
+  int64 published = 7;
+  int64 modified = 8;
+}
+
+message GetCVERequest{
+  string cve_id = 1;
+}
+
+message GetAllCVEsRequest {}
+
+message DeleteCVERequest {
+  string cve_id = 1;
+}
+
+message DeleteCVEResponse {
+  string cve_id = 1;
+}
+
+service VulnService {
+    rpc AddCVE(AddCVERequest) returns (CVE);
+    rpc GetCVE(GetCVERequest) returns (CVE);
+    rpc GetAllCVEs(GetAllCVEsRequest) returns (stream CVE);
+    rpc DeleteCVE(DeleteCVERequest) returns (DeleteCVEResponse);
+}
