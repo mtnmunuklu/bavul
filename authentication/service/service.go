@@ -100,12 +100,12 @@ func (s *AuthService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 		return nil, util.ErrEmptyEmail
 	}
 
-	found, err := s.userRepository.GetByEmail(normalizedEmail)
+	user, err := s.userRepository.GetByEmail(normalizedEmail)
 	if err != nil {
 		return nil, util.ErrNotFoundEmail
 	}
 
-	return found.ToProto(), nil
+	return user.ToProto(), nil
 }
 
 // DeleteUser performs delete the user.
@@ -300,11 +300,13 @@ func (s *AuthService) ListUsers(req *pb.ListUsersRequest, stream pb.AuthService_
 	if err != nil {
 		return util.ErrNotPerformedOperation
 	}
+
 	for _, user := range users {
 		err := stream.Send(user.ToProto())
 		if err != nil {
 			return util.ErrNotPerformedOperation
 		}
 	}
+
 	return nil
 }
