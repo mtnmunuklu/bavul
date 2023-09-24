@@ -22,18 +22,18 @@ type AuthHandlers interface {
 	GetUsers(c *fiber.Ctx) error
 }
 
-// AHandlers provides a connection with authentication service over proto buffer.
-type AHandlers struct {
+// authHandlers provides a connection with authentication service over proto buffer.
+type authHandlers struct {
 	authSvcClient pb.AuthServiceClient
 }
 
 // NewAuthHandlers creates a new AuthHandlers instance.
 func NewAuthHandlers(authSvcClient pb.AuthServiceClient) AuthHandlers {
-	return &AHandlers{authSvcClient: authSvcClient}
+	return &authHandlers{authSvcClient: authSvcClient}
 }
 
 // SignUp performs the user registration process.
-func (h *AHandlers) SignUp(c *fiber.Ctx) error {
+func (h *authHandlers) SignUp(c *fiber.Ctx) error {
 	signUpRequest := new(pb.SignUpRequest)
 	if err := c.BodyParser(signUpRequest); err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)
@@ -48,7 +48,7 @@ func (h *AHandlers) SignUp(c *fiber.Ctx) error {
 }
 
 // SignIn performs the user login process.
-func (h *AHandlers) SignIn(c *fiber.Ctx) error {
+func (h *authHandlers) SignIn(c *fiber.Ctx) error {
 	signInRequest := new(pb.SignInRequest)
 	if err := c.BodyParser(signInRequest); err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)
@@ -63,7 +63,7 @@ func (h *AHandlers) SignIn(c *fiber.Ctx) error {
 }
 
 // GetUser returns the user by email.
-func (h *AHandlers) GetUser(c *fiber.Ctx) error {
+func (h *authHandlers) GetUser(c *fiber.Ctx) error {
 	userId, err := util.GetUserIDFromToken(c)
 	if err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)
@@ -91,7 +91,7 @@ func (h *AHandlers) GetUser(c *fiber.Ctx) error {
 }
 
 // DeleteUser deletes the user by email.
-func (h *AHandlers) DeleteUser(c *fiber.Ctx) error {
+func (h *authHandlers) DeleteUser(c *fiber.Ctx) error {
 	userId, err := util.GetUserIDFromToken(c)
 	if err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)
@@ -119,7 +119,7 @@ func (h *AHandlers) DeleteUser(c *fiber.Ctx) error {
 }
 
 // ChangeUserRole changes the user role.
-func (h *AHandlers) ChangeUserRole(c *fiber.Ctx) error {
+func (h *authHandlers) ChangeUserRole(c *fiber.Ctx) error {
 	userId, err := util.GetUserIDFromToken(c)
 	if err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)
@@ -149,7 +149,7 @@ func (h *AHandlers) ChangeUserRole(c *fiber.Ctx) error {
 }
 
 // UpdateUserPassword updates the user password.
-func (h *AHandlers) UpdateUserPassword(c *fiber.Ctx) error {
+func (h *authHandlers) UpdateUserPassword(c *fiber.Ctx) error {
 	updatePasswordRequest := new(pb.UpdateUserPasswordRequest)
 	if err := c.BodyParser(updatePasswordRequest); err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)
@@ -164,7 +164,7 @@ func (h *AHandlers) UpdateUserPassword(c *fiber.Ctx) error {
 }
 
 // UpdateUserEmail updates the user email.
-func (h *AHandlers) UpdateUserEmail(c *fiber.Ctx) error {
+func (h *authHandlers) UpdateUserEmail(c *fiber.Ctx) error {
 	updateEmailRequest := new(pb.UpdateUserEmailRequest)
 	if err := c.BodyParser(updateEmailRequest); err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)
@@ -179,7 +179,7 @@ func (h *AHandlers) UpdateUserEmail(c *fiber.Ctx) error {
 }
 
 // UpdateUserName updates the user name.
-func (h *AHandlers) UpdateUserName(c *fiber.Ctx) error {
+func (h *authHandlers) UpdateUserName(c *fiber.Ctx) error {
 	updateNameRequest := new(pb.UpdateUserNameRequest)
 	if err := c.BodyParser(updateNameRequest); err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)
@@ -194,7 +194,7 @@ func (h *AHandlers) UpdateUserName(c *fiber.Ctx) error {
 }
 
 // GetUsers lists all users.
-func (h *AHandlers) GetUsers(c *fiber.Ctx) error {
+func (h *authHandlers) GetUsers(c *fiber.Ctx) error {
 	userId, err := util.GetUserIDFromToken(c)
 	if err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)

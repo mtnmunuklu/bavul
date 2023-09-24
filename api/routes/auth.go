@@ -30,6 +30,7 @@ func NewAuthRoutes(authHandlers handlers.AuthHandlers) []*Route {
 			Handler: func(c *fiber.Ctx) error {
 				return authHandlers.GetUser(c)
 			},
+			AuthRequired: true,
 		},
 		{
 			Method: http.MethodDelete,
