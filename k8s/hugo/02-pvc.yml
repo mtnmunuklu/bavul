@@ -4,9 +4,9 @@ metadata:
   name: hugo-pvc
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi
   volumeMode: Filesystem
-  storageClassName: common-stc
+  storageClassName: hugo-stc
