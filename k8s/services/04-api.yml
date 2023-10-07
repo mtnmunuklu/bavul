@@ -24,10 +24,12 @@ spec:
         command:
         - sh
         - -c
-        - /app/apisvc -local=false -auth_addr=$auth_addr
+        - /app/apisvc -local=false -auth_addr=$auth_addr -vuln_addr=$vuln_addr
         env:
           - name: auth_addr
             value: auth-service:9001
+          - name: vuln_addr
+            value: vuln-service:9002
           - name: JWT_SECRET_KEY
             valueFrom:
               secretKeyRef:

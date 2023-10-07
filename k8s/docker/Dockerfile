@@ -39,9 +39,7 @@ RUN hugo -v --source=${WEBSITE} \
 WORKDIR ${APP}
 # Copy all services to app directory
 COPY authsvc authsvc
-COPY crawlsvc crawlsvc
-COPY catzesvc catzesvc
-COPY catsvc catsvc
+COPY vulnsvc vulnsvc
 COPY apisvc apisvc
 
 # Install NGINX and deactivate NGINX's default index.html file
