@@ -19,13 +19,6 @@ echo -e "${GREEN}Apply common configurations${ENDCOLOR}"
 kubectl apply -f ../k8s/common/00-scripts.yml \
               -f ../k8s/common/01-ds.yml
 
-# Apply hugo configuration
-echo -e "${GREEN}Apply hugo configuration${ENDCOLOR}"
-kubectl apply -f ../k8s/hugo/00-stc.yml \
-              -f ../k8s/hugo/01-pv.yml \
-              -f ../k8s/hugo/02-pvc.yml \
-              -f ../k8s/hugo/03-hugo.yml
-
 # Apply mongodb configuration
 echo -e "${GREEN}Apply mongodb configuration${ENDCOLOR}"
 kubectl apply -f ../k8s/mongodb/00-stc.yml \

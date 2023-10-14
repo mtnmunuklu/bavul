@@ -4,5 +4,4 @@ metadata:
   name: common-scripts
 data:
   setup.sh: |
-    mkdir -p /bavuldb
-    mkdir -p /bavulsite
+    mkdir -p /bavul
