@@ -16,6 +16,7 @@ Bavul offers the following features:
 - Collect and store vulnerability information from various sources
 - API service for retrieving vulnerability information
 - Authentication service for user access and management
+- Vulnerability service for handling and analyzing security vulnerabilities
 
 ## Setup
 
@@ -56,7 +57,7 @@ To set up bavul, follow these steps:
 
 ## Usage
 
-Bavul consists of 2 different services: [authentication](authentication) and [api](api). All incoming requests are first forwarded to the API service. Afterwards, the API service decides to which service the incoming request will be forwarded. The requested URL plays a role in the decision-making process.
+Bavul consists of 3 different services: [vulnerability](vulnerability), [authentication](authentication) and [api](api). All incoming requests are first forwarded to the API service. Afterwards, the API service decides to which service the incoming request will be forwarded. The requested URL plays a role in the decision-making process.
 
 To understand the features of each service, the available endpoints, how to make requests, and the expected responses, refer to the [swagger.yml](docs/api/swagger.yml) file under the `docs` folder.
 
