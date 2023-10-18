@@ -1,3 +1,10 @@
+<p align="center">
+  <img width="400" height="400" src="images/logo.png">
+</p>
+
+<p align="center">
+<a href="https://pkg.go.dev/github.com/mtnmunuklu/bavul"><img src="https://img.shields.io/badge/%F0%9F%93%9A%20godoc-pkg-informational.svg" alt="Go Doc"></a> <a href="https://goreportcard.com/report/github.com/mtnmunuklu/bavul"><img src="https://img.shields.io/badge/%F0%9F%93%9D%20goreport-A+-success.svg" alt="Go Report"></a> 
+
 # Bavul <sub><small><small>(Be aware of vulnerabilities)</small></small></sub>
 Bavul is a project that collects and stores vulnerability information. It utilizes **Golang**, **Docker**, **Kubernetes**, **Hugo-site**, **Traefik**, **grpc-go**, and **Protocol Buffers** technologies.
 
