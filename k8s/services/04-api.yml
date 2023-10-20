@@ -30,11 +30,6 @@ spec:
             value: auth-service:9001
           - name: vuln_addr
             value: vuln-service:9002
-          - name: JWT_SECRET_KEY
-            valueFrom:
-              secretKeyRef:
-                name: svc-secrets
-                key: jwtSecretKey
           - name: CERT_PATH
             valueFrom:
               configMapKeyRef:
