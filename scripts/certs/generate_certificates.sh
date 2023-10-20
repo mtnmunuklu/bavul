@@ -40,5 +40,5 @@ echo -e "${GREEN}Creation of certificates for ingress${ENDCOLOR}"
 openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
     -out ../certs/api/bavul-cert.pem \
     -keyout ../certs/api/bavul-key.pem \
-    -addext "subjectAltName = DNS:bavul.com, DNS:api.bavul.com, DNS:api-service" \
+    -addext "subjectAltName = DNS:bavul.com, DNS:api.bavul.com, DNS:api-service, DNS:web-service" \
     -subj "/C=TR/ST=Istanbul/L=DavutPasa/O=bavul/OU=Software/CN=*.bavul.com/emailAddress=mtnmunuklu@gmail.com"

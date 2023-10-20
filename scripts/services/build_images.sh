@@ -5,6 +5,7 @@ echo -e "${GREEN}Copy builted services to docker directory${ENDCOLOR}"
 cp ../authentication/authsvc ../k8s/docker
 cp ../vulnerability/vulnsvc ../k8s/docker
 cp ../api/apisvc ../k8s/docker
+cp ../api/websvc ../k8s/docker
 
 # Build app docker file
 echo -e "${GREEN}Build docker file${ENDCOLOR}"

@@ -48,7 +48,8 @@ kubectl apply -f ../k8s/services/00-configs.yml \
               -f ../k8s/services/02-authentication.yml \
               -f ../k8s/services/03-vulnerability.yml
               -f ../k8s/services/04-api.yml \
-              -f ../k8s/services/05-tls_ingress.yml
+              -f ../k8s/services/05-web.yml \
+              -f ../k8s/services/06-tls_ingress.yml
 
 # Get all information
 echo -e "${GREEN}Get all information${ENDCOLOR}"

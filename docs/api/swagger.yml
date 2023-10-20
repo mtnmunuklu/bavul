@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  description: "Provides to crawl and categorize URL addresses."
+  description: "Collects and stores vulnerability information."
   version: "1.0.0"
   title: "Bavul API"
   contact:

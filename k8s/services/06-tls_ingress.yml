@@ -8,6 +8,7 @@ spec:
   tls:
   - hosts:
       - api.bavul.com
+      - bavul.com
     secretName: ingress-certs
   rules:
   - host: api.bavul.com
@@ -20,3 +21,13 @@ spec:
             name: api-service
             port:
               number: 9000
+  - host: bavul.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-service
+            port:
+              number: 9003

@@ -7,3 +7,8 @@ data:
   dbPort: "27017"
   dbName: bavul
   certPath: "/etc/certs"
+  projectName: Bavul
+  projectNameExplanation: Be aware of vulnerabilities
+  description: Welcome to the Bavul project! You can find more information about this open-source project on its GitHub repository and explore the API documentation.
+  githubLink: https://github.com/mtnmunuklu/bavul
+  imageURL: https://github.com/mtnmunuklu/bavul/blob/main/images/logo.png?raw=true
