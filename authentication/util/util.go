@@ -3,6 +3,7 @@ package util
 import (
 	"errors"
 	"strings"
+	"time"
 
 	"github.com/mtnmunuklu/bavul/pb"
 )
@@ -44,4 +45,18 @@ func ValidateSignUp(user *pb.SignUpRequest) error {
 // NormalizeEmail normalizes the user email address.
 func NormalizeEmail(email string) string {
 	return strings.TrimSpace(strings.ToLower(email))
+}
+
+func ParseTime(dateStr string) time.Time {
+	layout := "2006-01-02T15:04:05.000"
+	t, err := time.Parse(layout, dateStr)
+	if err != nil {
+		return time.Time{}
+	}
+	return t
+}
+
+func FormatTime(t time.Time) string {
+	layout := "2006-01-02T15:04:05.000"
+	return t.Format(layout)
 }

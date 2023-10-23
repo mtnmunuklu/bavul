@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/mtnmunuklu/bavul/pb"
+	"github.com/mtnmunuklu/bavul/vulnerability/util"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -26,8 +27,8 @@ func (u *User) ToProto() *pb.User {
 		Name:    u.Name,
 		Email:   u.Email,
 		Role:    u.Role,
-		Created: u.Created.Unix(),
-		Updated: u.Updated.Unix(),
+		Created: util.FormatTime(u.Created),
+		Updated: util.FormatTime(u.Updated),
 	}
 }
 
@@ -37,6 +38,6 @@ func (u *User) FromProto(user *pb.User) {
 	u.Name = user.GetName()
 	u.Email = user.GetEmail()
 	u.Role = user.GetRole()
-	u.Created = time.Unix(user.GetCreated(), 0)
-	u.Updated = time.Unix(user.GetUpdated(), 0)
+	u.Created = util.ParseTime(user.GetCreated())
+	u.Updated = util.ParseTime(user.GetUpdated())
 }
