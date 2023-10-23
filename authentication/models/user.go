@@ -3,8 +3,8 @@ package models
 import (
 	"time"
 
+	"github.com/mtnmunuklu/bavul/authentication/util"
 	"github.com/mtnmunuklu/bavul/pb"
-	"github.com/mtnmunuklu/bavul/vulnerability/util"
 
 	"gopkg.in/mgo.v2/bson"
 )
