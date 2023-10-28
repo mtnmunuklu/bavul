@@ -19,10 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	VulnService_AddCVE_FullMethodName     = "/messages.VulnService/AddCVE"
-	VulnService_GetCVE_FullMethodName     = "/messages.VulnService/GetCVE"
-	VulnService_GetAllCVEs_FullMethodName = "/messages.VulnService/GetAllCVEs"
-	VulnService_DeleteCVE_FullMethodName  = "/messages.VulnService/DeleteCVE"
+	VulnService_AddCVE_FullMethodName        = "/messages.VulnService/AddCVE"
+	VulnService_GetCVE_FullMethodName        = "/messages.VulnService/GetCVE"
+	VulnService_GetAllCVEs_FullMethodName    = "/messages.VulnService/GetAllCVEs"
+	VulnService_DeleteCVE_FullMethodName     = "/messages.VulnService/DeleteCVE"
+	VulnService_UpdateCVE_FullMethodName     = "/messages.VulnService/UpdateCVE"
+	VulnService_FetchNVDFeeds_FullMethodName = "/messages.VulnService/FetchNVDFeeds"
 )
 
 // VulnServiceClient is the client API for VulnService service.
@@ -33,6 +35,8 @@ type VulnServiceClient interface {
 	GetCVE(ctx context.Context, in *GetCVERequest, opts ...grpc.CallOption) (*CVE, error)
 	GetAllCVEs(ctx context.Context, in *GetAllCVEsRequest, opts ...grpc.CallOption) (VulnService_GetAllCVEsClient, error)
 	DeleteCVE(ctx context.Context, in *DeleteCVERequest, opts ...grpc.CallOption) (*DeleteCVEResponse, error)
+	UpdateCVE(ctx context.Context, in *UpdateCVERequest, opts ...grpc.CallOption) (*CVE, error)
+	FetchNVDFeeds(ctx context.Context, in *FetchNVDFeedsRequest, opts ...grpc.CallOption) (VulnService_FetchNVDFeedsClient, error)
 }
 
 type vulnServiceClient struct {
@@ -102,6 +106,47 @@ func (c *vulnServiceClient) DeleteCVE(ctx context.Context, in *DeleteCVERequest,
 	return out, nil
 }
 
+func (c *vulnServiceClient) UpdateCVE(ctx context.Context, in *UpdateCVERequest, opts ...grpc.CallOption) (*CVE, error) {
+	out := new(CVE)
+	err := c.cc.Invoke(ctx, VulnService_UpdateCVE_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vulnServiceClient) FetchNVDFeeds(ctx context.Context, in *FetchNVDFeedsRequest, opts ...grpc.CallOption) (VulnService_FetchNVDFeedsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &VulnService_ServiceDesc.Streams[1], VulnService_FetchNVDFeeds_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &vulnServiceFetchNVDFeedsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type VulnService_FetchNVDFeedsClient interface {
+	Recv() (*CVE, error)
+	grpc.ClientStream
+}
+
+type vulnServiceFetchNVDFeedsClient struct {
+	grpc.ClientStream
+}
+
+func (x *vulnServiceFetchNVDFeedsClient) Recv() (*CVE, error) {
+	m := new(CVE)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // VulnServiceServer is the server API for VulnService service.
 // All implementations should embed UnimplementedVulnServiceServer
 // for forward compatibility
@@ -110,6 +155,8 @@ type VulnServiceServer interface {
 	GetCVE(context.Context, *GetCVERequest) (*CVE, error)
 	GetAllCVEs(*GetAllCVEsRequest, VulnService_GetAllCVEsServer) error
 	DeleteCVE(context.Context, *DeleteCVERequest) (*DeleteCVEResponse, error)
+	UpdateCVE(context.Context, *UpdateCVERequest) (*CVE, error)
+	FetchNVDFeeds(*FetchNVDFeedsRequest, VulnService_FetchNVDFeedsServer) error
 }
 
 // UnimplementedVulnServiceServer should be embedded to have forward compatible implementations.
@@ -127,6 +174,12 @@ func (UnimplementedVulnServiceServer) GetAllCVEs(*GetAllCVEsRequest, VulnService
 }
 func (UnimplementedVulnServiceServer) DeleteCVE(context.Context, *DeleteCVERequest) (*DeleteCVEResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCVE not implemented")
+}
+func (UnimplementedVulnServiceServer) UpdateCVE(context.Context, *UpdateCVERequest) (*CVE, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCVE not implemented")
+}
+func (UnimplementedVulnServiceServer) FetchNVDFeeds(*FetchNVDFeedsRequest, VulnService_FetchNVDFeedsServer) error {
+	return status.Errorf(codes.Unimplemented, "method FetchNVDFeeds not implemented")
 }
 
 // UnsafeVulnServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -215,6 +268,45 @@ func _VulnService_DeleteCVE_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VulnService_UpdateCVE_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCVERequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VulnServiceServer).UpdateCVE(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VulnService_UpdateCVE_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VulnServiceServer).UpdateCVE(ctx, req.(*UpdateCVERequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VulnService_FetchNVDFeeds_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(FetchNVDFeedsRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(VulnServiceServer).FetchNVDFeeds(m, &vulnServiceFetchNVDFeedsServer{stream})
+}
+
+type VulnService_FetchNVDFeedsServer interface {
+	Send(*CVE) error
+	grpc.ServerStream
+}
+
+type vulnServiceFetchNVDFeedsServer struct {
+	grpc.ServerStream
+}
+
+func (x *vulnServiceFetchNVDFeedsServer) Send(m *CVE) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // VulnService_ServiceDesc is the grpc.ServiceDesc for VulnService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -234,11 +326,20 @@ var VulnService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteCVE",
 			Handler:    _VulnService_DeleteCVE_Handler,
 		},
+		{
+			MethodName: "UpdateCVE",
+			Handler:    _VulnService_UpdateCVE_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "GetAllCVEs",
 			Handler:       _VulnService_GetAllCVEs_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "FetchNVDFeeds",
+			Handler:       _VulnService_FetchNVDFeeds_Handler,
 			ServerStreams: true,
 		},
 	},

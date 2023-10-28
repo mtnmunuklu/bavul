@@ -12,8 +12,8 @@ message CVE {
   string product = 5;
   string vendor = 6;
   repeated string links = 7;
-  int64 published = 8;
-  int64 modified = 9;
+  string published = 8;
+  string modified = 9;
 }
 
 message AddCVERequest{
@@ -23,8 +23,8 @@ message AddCVERequest{
   string product = 4;
   string vendor = 5;
   repeated string links = 6;
-  int64 published = 7;
-  int64 modified = 8;
+  string published = 7;
+  string modified = 8;
 }
 
 message GetCVERequest{
@@ -41,9 +41,26 @@ message DeleteCVEResponse {
   string cve_id = 1;
 }
 
+message UpdateCVERequest{
+  string cve_id = 1;
+  string description = 2;
+  string severity = 3;
+  string product = 4;
+  string vendor = 5;
+  repeated string links = 6;
+  string published = 7;
+  string modified = 8;
+}
+
+message FetchNVDFeedsRequest {
+  string api_key = 1;
+}
+
 service VulnService {
     rpc AddCVE(AddCVERequest) returns (CVE);
     rpc GetCVE(GetCVERequest) returns (CVE);
     rpc GetAllCVEs(GetAllCVEsRequest) returns (stream CVE);
     rpc DeleteCVE(DeleteCVERequest) returns (DeleteCVEResponse);
+    rpc UpdateCVE(UpdateCVERequest) returns (CVE);
+    rpc FetchNVDFeeds(FetchNVDFeedsRequest) returns (stream CVE);
 }
