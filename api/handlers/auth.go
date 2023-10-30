@@ -80,9 +80,9 @@ func (h *authHandlers) GetUser(c *fiber.Ctx) error {
 	}
 
 	email := c.Get("Email")
-	user := &pb.GetUserRequest{Email: email}
+	getUserRequest := &pb.GetUserRequest{Email: email}
 
-	getedUser, err := h.authSvcClient.GetUser(c.Context(), user)
+	getedUser, err := h.authSvcClient.GetUser(c.Context(), getUserRequest)
 	if err != nil {
 		return util.WriteError(c, http.StatusUnprocessableEntity, err)
 	}
@@ -108,9 +108,9 @@ func (h *authHandlers) DeleteUser(c *fiber.Ctx) error {
 	}
 
 	email := c.Get("Email")
-	user := &pb.DeleteUserRequest{Email: email}
+	deleteUserRequest := &pb.DeleteUserRequest{Email: email}
 
-	deletedUser, err := h.authSvcClient.DeleteUser(c.Context(), user)
+	deletedUser, err := h.authSvcClient.DeleteUser(c.Context(), deleteUserRequest)
 	if err != nil {
 		return util.WriteError(c, http.StatusUnprocessableEntity, err)
 	}
@@ -135,12 +135,12 @@ func (h *authHandlers) ChangeUserRole(c *fiber.Ctx) error {
 		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
 	}
 
-	user := new(pb.ChangeUserRoleRequest)
-	if err := c.BodyParser(user); err != nil {
+	changeUserRoleRequest := new(pb.ChangeUserRoleRequest)
+	if err := c.BodyParser(changeUserRoleRequest); err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)
 	}
 
-	changedUser, err := h.authSvcClient.ChangeUserRole(c.Context(), user)
+	changedUser, err := h.authSvcClient.ChangeUserRole(c.Context(), changeUserRoleRequest)
 	if err != nil {
 		return util.WriteError(c, http.StatusUnprocessableEntity, err)
 	}

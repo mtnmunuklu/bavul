@@ -46,12 +46,12 @@ func (h *vulnHandlers) AddCVE(c *fiber.Ctx) error {
 		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
 	}
 
-	cve := new(pb.AddCVERequest)
-	if err := c.BodyParser(cve); err != nil {
+	addCVERequest := new(pb.AddCVERequest)
+	if err := c.BodyParser(addCVERequest); err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)
 	}
 
-	addedCVE, err := h.vulnSvcClient.AddCVE(c.Context(), cve)
+	addedCVE, err := h.vulnSvcClient.AddCVE(c.Context(), addCVERequest)
 	if err != nil {
 		return util.WriteError(c, http.StatusUnprocessableEntity, err)
 	}
@@ -62,9 +62,9 @@ func (h *vulnHandlers) AddCVE(c *fiber.Ctx) error {
 
 func (h *vulnHandlers) GetCVE(c *fiber.Ctx) error {
 	cveId := c.Get("cveId")
-	cve := &pb.GetCVERequest{CveId: cveId}
+	getCVERequest := &pb.GetCVERequest{CveId: cveId}
 
-	getedCVE, err := h.vulnSvcClient.GetCVE(c.Context(), cve)
+	getedCVE, err := h.vulnSvcClient.GetCVE(c.Context(), getCVERequest)
 	if err != nil {
 		return util.WriteError(c, http.StatusUnprocessableEntity, err)
 	}
@@ -127,9 +127,9 @@ func (h *vulnHandlers) DeleteCVE(c *fiber.Ctx) error {
 	}
 
 	cveId := c.Get("cveId")
-	cve := &pb.DeleteCVERequest{CveId: cveId}
+	deleteCVERequest := &pb.DeleteCVERequest{CveId: cveId}
 
-	deletedCVE, err := h.vulnSvcClient.DeleteCVE(c.Context(), cve)
+	deletedCVE, err := h.vulnSvcClient.DeleteCVE(c.Context(), deleteCVERequest)
 	if err != nil {
 		return util.WriteError(c, http.StatusUnprocessableEntity, err)
 	}

@@ -44,7 +44,7 @@ kubectl create secret tls ingress-certs --key ../certs/api/bavul-key.pem --cert 
 # Apply service configuration
 echo -e "${GREEN}Apply service configuration${ENDCOLOR}"
 kubectl apply -f ../k8s/services/00-configs.yml \
-              -f ../k8s/services/01-svc_secrets.yml \
+              -f ../k8s/services/01-secrets.yml \
               -f ../k8s/services/02-authentication.yml \
               -f ../k8s/services/03-vulnerability.yml
               -f ../k8s/services/04-api.yml \

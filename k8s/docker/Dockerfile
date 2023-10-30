@@ -12,13 +12,14 @@ WORKDIR ${APP}
 COPY authsvc authsvc
 COPY vulnsvc vulnsvc
 COPY apisvc apisvc
-
+COPY websvc websvc
 # Expose ports for the services
 # These ports should match the ports that your services are listening on
 EXPOSE 9000
 EXPOSE 9001
 EXPOSE 9002
+EXPOSE 9003
 
 # Define the command to run the services
 # Replace the command with the correct paths to your service binaries
-CMD ["/app/authsvc", "/app/vulnsvc", "/app/apisvc"]
+CMD ["/app/authsvc", "/app/vulnsvc", "/app/apisvc", "/app/websvc"]
