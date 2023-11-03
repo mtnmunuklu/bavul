@@ -6,7 +6,7 @@
 <a href="https://pkg.go.dev/github.com/mtnmunuklu/bavul"><img src="https://img.shields.io/badge/%F0%9F%93%9A%20godoc-pkg-informational.svg" alt="Go Doc"></a> <a href="https://goreportcard.com/report/github.com/mtnmunuklu/bavul"><img src="https://img.shields.io/badge/%F0%9F%93%9D%20goreport-A+-success.svg" alt="Go Report"></a> 
 
 # Bavul <sub><small><small>(Be aware of vulnerabilities)</small></small></sub>
-Bavul is a project that collects and stores vulnerability information. It utilizes **Golang**, **Docker**, **Kubernetes**, **Hugo-site**, **Traefik**, **grpc-go**, and **Protocol Buffers** technologies.
+Bavul is a project that collects and stores vulnerability information. It utilizes **Golang**, **Docker**, **Kubernetes**, **Fiber**, **Traefik**, **gRPC**, and **Protocol Buffers** technologies.
 
 ## Table of Contents
 
@@ -64,11 +64,11 @@ To set up bavul, follow these steps:
 
 ## Usage
 
-Bavul consists of 3 different services: [vulnerability](vulnerability), [authentication](authentication) and [api](api). All incoming requests are first forwarded to the API service. Afterwards, the API service decides to which service the incoming request will be forwarded. The requested URL plays a role in the decision-making process.
+Bavul consists of 4 different services: [vulnerability](vulnerability), [authentication](authentication), [api](api), and [web](web). Unlike the other services, incoming requests to the web service are directly routed without passing through the API service. The requested URL plays a role in the decision-making process.
 
-To understand the features of each service, the available endpoints, how to make requests, and the expected responses, refer to the [swagger.yml](docs/api/swagger.yml) file under the `docs` folder.
+To understand the features of each service, the available endpoints, how to make requests, and the expected responses, refer to the [swagger.yml](docs/api/swagger.yml) file under the [docs](docs) folder.
 
-You can also access the documents describing the software structure of each service under the `docs` folder.
+You can also access the documents describing the `software structure` of each service under the [docs](docs) folder.
 
 ## Sponsors
 
