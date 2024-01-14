@@ -27,8 +27,13 @@ message AddCVERequest{
   string modified = 8;
 }
 
-message GetCVERequest{
+message SearchCVERequest{
   string cve_id = 1;
+  string severity = 2;
+  string product = 3;
+  string vendor = 4;
+  string start_date = 5;
+  string end_date = 6;
 }
 
 message GetAllCVEsRequest {}
@@ -58,7 +63,7 @@ message FetchNVDFeedsRequest {
 
 service VulnService {
     rpc AddCVE(AddCVERequest) returns (CVE);
-    rpc GetCVE(GetCVERequest) returns (CVE);
+    rpc SearchCVE(SearchCVERequest) returns (stream CVE);
     rpc GetAllCVEs(GetAllCVEsRequest) returns (stream CVE);
     rpc DeleteCVE(DeleteCVERequest) returns (DeleteCVEResponse);
     rpc UpdateCVE(UpdateCVERequest) returns (CVE);

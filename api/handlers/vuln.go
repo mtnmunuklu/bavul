@@ -12,7 +12,7 @@ import (
 // VulnHandlers is the interface of the vulnerability operation.
 type VulnHandlers interface {
 	AddCVE(c *fiber.Ctx) error
-	GetCVE(c *fiber.Ctx) error
+	SearchCVE(c *fiber.Ctx) error
 	GetAllCVEs(c *fiber.Ctx) error
 	DeleteCVE(c *fiber.Ctx) error
 	UpdateCVE(c *fiber.Ctx) error
@@ -58,18 +58,6 @@ func (h *vulnHandlers) AddCVE(c *fiber.Ctx) error {
 
 	return util.WriteAsJSON(c, http.StatusOK, addedCVE)
 
-}
-
-func (h *vulnHandlers) GetCVE(c *fiber.Ctx) error {
-	cveId := c.Get("cveId")
-	getCVERequest := &pb.GetCVERequest{CveId: cveId}
-
-	getedCVE, err := h.vulnSvcClient.GetCVE(c.Context(), getCVERequest)
-	if err != nil {
-		return util.WriteError(c, http.StatusUnprocessableEntity, err)
-	}
-
-	return util.WriteAsJSON(c, http.StatusOK, getedCVE)
 }
 
 func (h *vulnHandlers) GetAllCVEs(c *fiber.Ctx) error {
@@ -167,7 +155,7 @@ func (h *vulnHandlers) FetchNVDFeeds(c *fiber.Ctx) error {
 		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
 	}
 
-	apiKey := c.Get("ApiKey")
+	apiKey := c.Get("apiKey")
 	fetchNVDFeedsRequest := &pb.FetchNVDFeedsRequest{ApiKey: apiKey}
 
 	stream, err := h.vulnSvcClient.FetchNVDFeeds(c.Context(), fetchNVDFeedsRequest)
@@ -190,4 +178,37 @@ func (h *vulnHandlers) FetchNVDFeeds(c *fiber.Ctx) error {
 	}
 
 	return util.WriteAsJSON(c, http.StatusOK, fetchedNVDFeeds)
+}
+
+func (h *vulnHandlers) SearchCVE(c *fiber.Ctx) error {
+
+	cveId := c.Get("cveId")
+	severity := c.Get("severity")
+	product := c.Get("product")
+	vendor := c.Get("vendor")
+	startDate := c.Get("startDate")
+	endDate := c.Get("endDate")
+
+	searchCVEsRequest := &pb.SearchCVERequest{CveId: cveId, Severity: severity, Product: product, Vendor: vendor, StartDate: startDate, EndDate: endDate}
+
+	stream, err := h.vulnSvcClient.SearchCVE(c.Context(), searchCVEsRequest)
+	if err != nil {
+		return util.WriteError(c, http.StatusUnprocessableEntity, err)
+	}
+
+	var searchedCVEs []*pb.CVE
+	for {
+		searchedCVE, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			return util.WriteError(c, http.StatusBadRequest, err)
+		}
+
+		searchedCVEs = append(searchedCVEs, searchedCVE)
+	}
+
+	return util.WriteAsJSON(c, http.StatusOK, searchedCVEs)
 }
