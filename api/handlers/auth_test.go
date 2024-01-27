@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"flag"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"testing"
@@ -45,7 +45,7 @@ func TestSignUp(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -83,7 +83,7 @@ func TestSignIn(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -119,7 +119,7 @@ func TestGetUser(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -143,7 +143,7 @@ func TestGetUser(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err = ioutil.ReadAll(response.Body)
+	body, err = io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -183,7 +183,7 @@ func TestDeleteUser(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -207,7 +207,7 @@ func TestDeleteUser(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err = ioutil.ReadAll(response.Body)
+	body, err = io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -240,7 +240,7 @@ func TestChangeUserRole(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -272,7 +272,7 @@ func TestChangeUserRole(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err = ioutil.ReadAll(response.Body)
+	body, err = io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -305,7 +305,7 @@ func TestUpdateUserPasword(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -338,7 +338,7 @@ func TestUpdateUserPasword(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err = ioutil.ReadAll(response.Body)
+	body, err = io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -371,7 +371,7 @@ func TestUpdateUserEmail(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -404,7 +404,7 @@ func TestUpdateUserEmail(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err = ioutil.ReadAll(response.Body)
+	body, err = io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -437,7 +437,7 @@ func TestUpdateUserName(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -470,7 +470,7 @@ func TestUpdateUserName(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err = ioutil.ReadAll(response.Body)
+	body, err = io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -503,7 +503,7 @@ func TestGetUsers(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
@@ -525,7 +525,7 @@ func TestGetUsers(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	body, err = ioutil.ReadAll(response.Body)
+	body, err = io.ReadAll(response.Body)
 	assert.NoError(t, err)
 	assert.NotNil(t, body)
 
