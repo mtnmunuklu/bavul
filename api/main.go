@@ -68,7 +68,7 @@ func main() {
 	defer authConn.Close()
 
 	vulnSvcClient := pb.NewVulnServiceClient(vulnConn)
-	vulnHandlers := handlers.NewVulnHandlers(vulnSvcClient)
+	vulnHandlers := handlers.NewVulnHandlers(autSvcClient, vulnSvcClient)
 	vulnRoutes := routes.NewVulnRoutes(vulnHandlers)
 
 	app := fiber.New()

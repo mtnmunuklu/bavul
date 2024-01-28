@@ -26,8 +26,8 @@ type vulnHandlers struct {
 }
 
 // NewAuthHandlers creates a new VulnHandlers instance.
-func NewVulnHandlers(vulnSvcClient pb.VulnServiceClient) VulnHandlers {
-	return &vulnHandlers{vulnSvcClient: vulnSvcClient}
+func NewVulnHandlers(authSvcClient pb.AuthServiceClient, vulnSvcClient pb.VulnServiceClient) VulnHandlers {
+	return &vulnHandlers{authSvcClient: authSvcClient, vulnSvcClient: vulnSvcClient}
 }
 
 func (h *vulnHandlers) AddCVE(c *fiber.Ctx) error {
