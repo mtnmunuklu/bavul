@@ -58,13 +58,5 @@ func NewVulnRoutes(vulnHandlers handlers.VulnHandlers) []*Route {
 			},
 			AuthRequired: true,
 		},
-		{
-			Method: http.MethodGet,
-			Path:   "/cve-search",
-			Handler: func(c *fiber.Ctx) error {
-				return vulnHandlers.FetchNVDFeeds(c)
-			},
-			AuthRequired: true,
-		},
 	}
 }
