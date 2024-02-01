@@ -114,7 +114,7 @@ func (h *vulnHandlers) DeleteCVE(c *fiber.Ctx) error {
 		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
 	}
 
-	cveId := c.Get("cveId")
+	cveId := c.Get("CveId")
 	deleteCVERequest := &pb.DeleteCVERequest{CveId: cveId}
 
 	deletedCVE, err := h.vulnSvcClient.DeleteCVE(c.Context(), deleteCVERequest)
@@ -155,7 +155,7 @@ func (h *vulnHandlers) FetchNVDFeeds(c *fiber.Ctx) error {
 		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
 	}
 
-	apiKey := c.Get("apiKey")
+	apiKey := c.Get("ApiKey")
 	fetchNVDFeedsRequest := &pb.FetchNVDFeedsRequest{ApiKey: apiKey}
 
 	stream, err := h.vulnSvcClient.FetchNVDFeeds(c.Context(), fetchNVDFeedsRequest)
@@ -182,12 +182,12 @@ func (h *vulnHandlers) FetchNVDFeeds(c *fiber.Ctx) error {
 
 func (h *vulnHandlers) SearchCVE(c *fiber.Ctx) error {
 
-	cveId := c.Get("cveId")
-	severity := c.Get("severity")
-	product := c.Get("product")
-	vendor := c.Get("vendor")
-	startDate := c.Get("startDate")
-	endDate := c.Get("endDate")
+	cveId := c.Get("CveId")
+	severity := c.Get("Severity")
+	product := c.Get("Product")
+	vendor := c.Get("Vendor")
+	startDate := c.Get("StartDate")
+	endDate := c.Get("EndDate")
 
 	searchCVEsRequest := &pb.SearchCVERequest{CveId: cveId, Severity: severity, Product: product, Vendor: vendor, StartDate: startDate, EndDate: endDate}
 

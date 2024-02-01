@@ -245,7 +245,6 @@ func (m *MockVulnService_GetAllCVEsClientWrapper) SetRecvDeadline(m1 time.Time) 
 	return nil
 }
 
-// MockVulnService_GetAllCVEsClient basit bir mock implementasyonu
 func TestAddCVE(t *testing.T) {
 
 	// Create a custom mock client wrapper for Auth Service
@@ -296,7 +295,7 @@ func TestAddCVE(t *testing.T) {
 	assert.NoError(t, err)
 	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
 
-	// Your test code here
+	// Test the AddCVE handler
 	err = handler.AddCVE(fiberContext)
 	assert.NoError(t, err)
 
@@ -349,7 +348,7 @@ func TestGetAllCVEs(t *testing.T) {
 	assert.NoError(t, err)
 	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
 
-	// Your test code here
+	// Test the GetAllCVEs handler
 	err = handler.GetAllCVEs(fiberContext)
 	assert.NoError(t, err)
 
@@ -357,8 +356,53 @@ func TestGetAllCVEs(t *testing.T) {
 	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockAuthWrapper should be called")
 	assert.True(t, mockVulnWrapper.GetAllCVEsFuncCalled, "GetAllCVEs function of mockVulnWrapper should be called")
 
-	// Additional assertions based on the expected response can be added if needed
+	// Release the Fiber context
+	app.ReleaseCtx(fiberContext)
+}
+
+func TestDeleteCVE(t *testing.T) {
+
+	// Create a custom mock client wrapper for Auth Service
+	mockAuthWrapper := &MockAuthServiceClientWrapper{}
+
+	// Create a custom mock client wrapper for Vuln Service
+	mockVulnWrapper := &MockVulnServiceClientWrapper{}
+
+	// Create handlers using the custom mock client wrapper
+	handler := NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
+
+	// Set Auth Service Client in the mockWrapper
+	mockAuthWrapper.GetUserRoleFunc = func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.GetUserRoleResponse{Role: "admin"}, nil
+	}
+
+	// Set Vuln Service Client in the mockWrapper
+	mockVulnWrapper.DeleteCVEFunc = func(ctx context.Context, req *pb.DeleteCVERequest, opts ...grpc.CallOption) (*pb.DeleteCVEResponse, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.DeleteCVEResponse{CveId: req.CveId}, nil
+	}
+
+	// Create a Fiber context
+	app := fiber.New()
+	fiberContext := app.AcquireCtx(&fasthttp.RequestCtx{})
+
+	// Set the request headers in the Fiber context
+	userId := bson.NewObjectId()
+	token, err := security.NewToken(userId.Hex())
+	assert.NoError(t, err)
+	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
+	fiberContext.Request().Header.Set("CveId", "123")
+
+	// Test the DeleteCVE handler
+	err = handler.DeleteCVE(fiberContext)
+	assert.NoError(t, err)
+
+	// Assert that the GetUserRole and DeleteCVE functions were called with the expected parameters
+	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockWrapper should be called")
+	assert.True(t, mockVulnWrapper.DeleteCVEFuncCalled, "DeleteCVE function of mockWrapper should be called")
 
 	// Release the Fiber context
 	app.ReleaseCtx(fiberContext)
+
 }
