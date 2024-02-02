@@ -406,3 +406,60 @@ func TestDeleteCVE(t *testing.T) {
 	app.ReleaseCtx(fiberContext)
 
 }
+
+func TestUpdateCVE(t *testing.T) {
+
+	// Create a custom mock client wrapper for Auth Service
+	mockAuthWrapper := &MockAuthServiceClientWrapper{}
+
+	// Create a custom mock client wrapper for Vuln Service
+	mockVulnWrapper := &MockVulnServiceClientWrapper{}
+
+	// Create handlers using the custom mock client wrapper
+	handler := NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
+
+	// Set Auth Service Client in the mockWrapper
+	mockAuthWrapper.GetUserRoleFunc = func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.GetUserRoleResponse{Role: "admin"}, nil
+	}
+
+	// Set Vuln Service Client in the mockWrapper
+	mockVulnWrapper.UpdateCVEFunc = func(ctx context.Context, req *pb.UpdateCVERequest, opts ...grpc.CallOption) (*pb.CVE, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.CVE{Id: "123", CveId: req.CveId, Description: req.Description, Severity: req.Severity, Product: "Test Product", Vendor: "Test Vendor", Published: "2024-01-27T10:10:10", Modified: "2024-01-27T10:10:10"}, nil
+	}
+
+	// Create a Fiber context
+	app := fiber.New()
+	fiberContext := app.AcquireCtx(&fasthttp.RequestCtx{})
+
+	// Set the request body in the Fiber context
+	request := &pb.AddCVERequest{
+		CveId:       "test123",
+		Description: "Test CVE",
+		Severity:    "High",
+	}
+	body, err := json.Marshal(request)
+	assert.NoError(t, err)
+
+	// Set the content-type to JSON
+	fiberContext.Request().SetBody(body)
+	fiberContext.Request().Header.Set("Content-Type", "application/json")
+
+	userId := bson.NewObjectId()
+	token, err := security.NewToken(userId.Hex())
+	assert.NoError(t, err)
+	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
+
+	// Test the UpdateCVE handler
+	err = handler.UpdateCVE(fiberContext)
+	assert.NoError(t, err)
+
+	// Assert that the GetUserRole and UpdateCVE functions were called with the expected parameters
+	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockWrapper should be called")
+	assert.True(t, mockVulnWrapper.UpdateCVEFuncCalled, "UpdateCVE function of mockWrapper should be called")
+
+	// Release the Fiber context
+	app.ReleaseCtx(fiberContext)
+}

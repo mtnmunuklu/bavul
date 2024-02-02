@@ -126,6 +126,21 @@ func (h *vulnHandlers) DeleteCVE(c *fiber.Ctx) error {
 }
 
 func (h *vulnHandlers) UpdateCVE(c *fiber.Ctx) error {
+	userId, err := util.GetUserIDFromToken(c)
+	if err != nil {
+		return util.WriteError(c, http.StatusBadRequest, err)
+	}
+
+	getedUserRole, err := h.authSvcClient.GetUserRole(c.Context(), &pb.GetUserRoleRequest{Id: userId})
+	if err != nil {
+		return util.WriteError(c, http.StatusUnprocessableEntity, err)
+	}
+
+	userIsAdmin := util.CheckUserIsAdmin(getedUserRole.Role)
+	if !userIsAdmin {
+		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
+	}
+
 	updateCVERequest := new(pb.UpdateCVERequest)
 	if err := c.BodyParser(updateCVERequest); err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)
