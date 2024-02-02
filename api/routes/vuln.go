@@ -24,7 +24,6 @@ func NewVulnRoutes(vulnHandlers handlers.VulnHandlers) []*Route {
 			Handler: func(c *fiber.Ctx) error {
 				return vulnHandlers.SearchCVE(c)
 			},
-			AuthRequired: true,
 		},
 		{
 			Method: http.MethodGet,
