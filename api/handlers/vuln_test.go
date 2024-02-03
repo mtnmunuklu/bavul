@@ -507,7 +507,7 @@ func TestFetchNVDFeeds(t *testing.T) {
 	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
 	fiberContext.Request().Header.Set("CveId", "123")
 
-	// Test the DeleteCVE handler
+	// Test the FetchNVDFeeds handler
 	err = handler.FetchNVDFeeds(fiberContext)
 	assert.NoError(t, err)
 
@@ -518,4 +518,52 @@ func TestFetchNVDFeeds(t *testing.T) {
 	// Release the Fiber context
 	app.ReleaseCtx(fiberContext)
 
+}
+
+func TestSearchCVE(t *testing.T) {
+
+	// Create a custom mock client wrapper for Auth Service
+	mockAuthWrapper := &MockAuthServiceClientWrapper{}
+
+	// Create a custom mock client wrapper for Vuln Service
+	mockVulnWrapper := &MockVulnServiceClientWrapper{}
+
+	// Create handlers using the custom mock client wrapper
+	handler := NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
+
+	// Set Vuln Service Client in the mockWrapper
+	mockVulnWrapper.SearchCVEFunc = func(ctx context.Context, req *pb.SearchCVERequest, opts ...grpc.CallOption) (pb.VulnService_SearchCVEClient, error) {
+		// Simulate the behavior of the gRPC service
+		cves := []*pb.CVE{
+			{Id: "1", CveId: "CVE-2022-1234", Description: "Test CVE 1", Severity: "High", Product: "Test Product 1", Vendor: "Test Vendor 1", Published: "2024-01-27T10:10:10", Modified: "2024-01-27T10:10:10"},
+			{Id: "2", CveId: "CVE-2022-5678", Description: "Test CVE 2", Severity: "High", Product: "Test Product 2", Vendor: "Test Vendor 2", Published: "2024-01-27T10:20:20", Modified: "2024-01-27T10:20:20"},
+		}
+
+		mockStream := &MockVulnService_StreamClientWrapper{
+			cves: cves,
+		}
+
+		return mockStream, nil
+	}
+
+	// Create a Fiber context
+	app := fiber.New()
+	fiberContext := app.AcquireCtx(&fasthttp.RequestCtx{})
+
+	// Set the request headers in the Fiber context
+	userId := bson.NewObjectId()
+	token, err := security.NewToken(userId.Hex())
+	assert.NoError(t, err)
+	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
+	fiberContext.Request().Header.Set("Severity", "High")
+
+	// Test the SearchCVE handler
+	err = handler.SearchCVE(fiberContext)
+	assert.NoError(t, err)
+
+	// Assert that the SearchCVE functions were called with the expected parameters
+	assert.True(t, mockVulnWrapper.SearchCVEFuncCalled, "SearchCVE function of mockWrapper should be called")
+
+	// Release the Fiber context
+	app.ReleaseCtx(fiberContext)
 }
