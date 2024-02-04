@@ -1,536 +1,576 @@
-package handlers
+package handlers_test
 
 import (
+	"context"
 	"encoding/json"
-	"flag"
 	"io"
-	"net/http"
-	"strings"
 	"testing"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
+	"github.com/mtnmunuklu/bavul/api/handlers"
+	"github.com/mtnmunuklu/bavul/authentication/util"
 	"github.com/mtnmunuklu/bavul/pb"
-
+	"github.com/mtnmunuklu/bavul/security"
 	"github.com/stretchr/testify/assert"
+	"github.com/valyala/fasthttp"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
+	"gopkg.in/mgo.v2/bson"
 )
 
-var (
-	authAddr string
-)
-
-func init() {
-	flag.StringVar(&authAddr, "auth_addr", "http://localhost:9000", "authentication url address")
-
+// Custom mock client that implements the pb.AuthServiceClient interface
+type MockAuthServiceClientWrapper struct {
+	ChangeUserRoleFunc           func(ctx context.Context, req *pb.ChangeUserRoleRequest, opts ...grpc.CallOption) (*pb.User, error)
+	GetUserRoleFunc              func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error)
+	ListUsersFunc                func(ctx context.Context, req *pb.ListUsersRequest, opts ...grpc.CallOption) (pb.AuthService_ListUsersClient, error)
+	UpdateUserPasswordFunc       func(ctx context.Context, req *pb.UpdateUserPasswordRequest, opts ...grpc.CallOption) (*pb.User, error)
+	UpdateUserEmailFunc          func(ctx context.Context, req *pb.UpdateUserEmailRequest, opts ...grpc.CallOption) (*pb.User, error)
+	UpdateUserNameFunc           func(ctx context.Context, req *pb.UpdateUserNameRequest, opts ...grpc.CallOption) (*pb.User, error)
+	SignUpFunc                   func(ctx context.Context, req *pb.SignUpRequest, opts ...grpc.CallOption) (*pb.User, error)
+	SignInFunc                   func(ctx context.Context, req *pb.SignInRequest, opts ...grpc.CallOption) (*pb.SignInResponse, error)
+	DeleteUserFunc               func(ctx context.Context, req *pb.DeleteUserRequest, opts ...grpc.CallOption) (*pb.DeleteUserResponse, error)
+	GetUserFunc                  func(ctx context.Context, req *pb.GetUserRequest, opts ...grpc.CallOption) (*pb.User, error)
+	ChangeUserRoleFuncCalled     bool
+	GetUserRoleFuncCalled        bool
+	ListUsersFuncCalled          bool
+	UpdateUserPasswordFuncCalled bool
+	UpdateUserEmailFuncCalled    bool
+	UpdateUserNameFuncCalled     bool
+	SignUpFuncCalled             bool
+	SignInFuncCalled             bool
+	DeleteUserFuncCalled         bool
+	GetUserFuncCalled            bool
 }
 
-// TestSignUp tests the user registration process.
+func (c *MockAuthServiceClientWrapper) ChangeUserRole(ctx context.Context, req *pb.ChangeUserRoleRequest, opts ...grpc.CallOption) (*pb.User, error) {
+	c.ChangeUserRoleFuncCalled = true
+	if c.ChangeUserRoleFunc != nil {
+		return c.ChangeUserRoleFunc(ctx, req, opts...)
+	}
+	return nil, nil
+}
+
+func (c *MockAuthServiceClientWrapper) GetUserRole(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
+	c.GetUserRoleFuncCalled = true
+	if c.GetUserRoleFunc != nil {
+		return c.GetUserRoleFunc(ctx, req, opts...)
+	}
+	return nil, nil
+}
+
+func (c *MockAuthServiceClientWrapper) ListUsers(ctx context.Context, req *pb.ListUsersRequest, opts ...grpc.CallOption) (pb.AuthService_ListUsersClient, error) {
+	c.ListUsersFuncCalled = true
+	if c.ListUsersFunc != nil {
+		return c.ListUsersFunc(ctx, req, opts...)
+	}
+	return nil, nil
+}
+
+func (c *MockAuthServiceClientWrapper) UpdateUserPassword(ctx context.Context, req *pb.UpdateUserPasswordRequest, opts ...grpc.CallOption) (*pb.User, error) {
+	c.UpdateUserPasswordFuncCalled = true
+	if c.UpdateUserPasswordFunc != nil {
+		return c.UpdateUserPasswordFunc(ctx, req, opts...)
+	}
+	return nil, nil
+}
+
+func (c *MockAuthServiceClientWrapper) UpdateUserEmail(ctx context.Context, req *pb.UpdateUserEmailRequest, opts ...grpc.CallOption) (*pb.User, error) {
+	c.UpdateUserEmailFuncCalled = true
+	if c.UpdateUserEmailFunc != nil {
+		return c.UpdateUserEmailFunc(ctx, req, opts...)
+	}
+	return nil, nil
+}
+
+func (c *MockAuthServiceClientWrapper) UpdateUserName(ctx context.Context, req *pb.UpdateUserNameRequest, opts ...grpc.CallOption) (*pb.User, error) {
+	c.UpdateUserNameFuncCalled = true
+	if c.UpdateUserNameFunc != nil {
+		return c.UpdateUserNameFunc(ctx, req, opts...)
+	}
+	return nil, nil
+}
+
+func (c *MockAuthServiceClientWrapper) SignUp(ctx context.Context, req *pb.SignUpRequest, opts ...grpc.CallOption) (*pb.User, error) {
+	c.SignUpFuncCalled = true
+	if c.SignUpFunc != nil {
+		return c.SignUpFunc(ctx, req, opts...)
+	}
+	return nil, nil
+}
+
+func (c *MockAuthServiceClientWrapper) SignIn(ctx context.Context, req *pb.SignInRequest, opts ...grpc.CallOption) (*pb.SignInResponse, error) {
+	c.SignInFuncCalled = true
+	if c.SignInFunc != nil {
+		return c.SignInFunc(ctx, req, opts...)
+	}
+	return nil, nil
+}
+
+func (c *MockAuthServiceClientWrapper) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest, opts ...grpc.CallOption) (*pb.DeleteUserResponse, error) {
+	c.DeleteUserFuncCalled = true
+	if c.DeleteUserFunc != nil {
+		return c.DeleteUserFunc(ctx, req, opts...)
+	}
+	return nil, nil
+}
+
+func (c *MockAuthServiceClientWrapper) GetUser(ctx context.Context, req *pb.GetUserRequest, opts ...grpc.CallOption) (*pb.User, error) {
+	c.GetUserFuncCalled = true
+	if c.GetUserFunc != nil {
+		return c.GetUserFunc(ctx, req, opts...)
+	}
+	return nil, nil
+}
+
+type MockAuthService_StreamClientWrapper struct {
+	users []*pb.User
+	idx   int
+}
+
+// Recv simulates receiving Users from the server.
+func (m *MockAuthService_StreamClientWrapper) Recv() (*pb.User, error) {
+	if m.idx < len(m.users) {
+		user := m.users[m.idx]
+		m.idx++
+		return user, nil
+	}
+	return nil, io.EOF
+}
+
+// CloseSend simulates closing the send stream.
+func (m *MockAuthService_StreamClientWrapper) CloseSend() error {
+	return nil
+}
+
+// Context returns the client context.
+func (m *MockAuthService_StreamClientWrapper) Context() context.Context {
+	return context.Background()
+}
+
+// SendMsg simulates sending a message.
+func (m *MockAuthService_StreamClientWrapper) SendMsg(m1 interface{}) error {
+	return nil
+}
+
+// RecvMsg simulates receiving a message.
+func (m *MockAuthService_StreamClientWrapper) RecvMsg(m1 interface{}) error {
+	return nil
+}
+
+// Header returns the header metadata.
+func (m *MockAuthService_StreamClientWrapper) Header() (metadata.MD, error) {
+	return nil, nil
+}
+
+// Trailer returns the trailer metadata.
+func (m *MockAuthService_StreamClientWrapper) Trailer() metadata.MD {
+	return nil
+}
+
+// SendHeader simulates sending header metadata.
+func (m *MockAuthService_StreamClientWrapper) SendHeader(m1 metadata.MD) error {
+	return nil
+}
+
+// SetSendDeadline simulates setting the send deadline.
+func (m *MockAuthService_StreamClientWrapper) SetSendDeadline(m1 time.Time) error {
+	return nil
+}
+
+// SetRecvDeadline simulates setting the receive deadline.
+func (m *MockAuthService_StreamClientWrapper) SetRecvDeadline(m1 time.Time) error {
+	return nil
+}
+
 func TestSignUp(t *testing.T) {
-	url := authAddr + "/signup"
-	jsonSignIn := map[string]string{
-		"Name":     "Test User",
-		"Email":    "testuser@email.com",
-		"Password": "testuser",
+	// Create a custom mock client wrapper for Auth Service
+	mockAuthWrapper := &MockAuthServiceClientWrapper{}
+
+	// Create handlers using the custom mock client wrapper
+	handler := handlers.NewAuthHandlers(mockAuthWrapper)
+
+	// Set Auth Service Client in the mockWrapper
+	mockAuthWrapper.SignUpFunc = func(ctx context.Context, req *pb.SignUpRequest, opts ...grpc.CallOption) (*pb.User, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.User{Id: "1", Name: req.GetName(), Email: req.GetEmail(), Role: "user", Created: "2024-02-02T18:18:00", Updated: "2024-02-02T18:18:00"}, nil
 	}
-	jsonSignInByte, err := json.Marshal(jsonSignIn)
-	assert.NoError(t, err)
-	payload := strings.NewReader(string(jsonSignInByte))
 
-	client := &http.Client{}
-	request, err := http.NewRequest("PUT", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
-	request.Header.Add("Content-Type", "application/json")
+	// Create a Fiber context
+	app := fiber.New()
+	fiberContext := app.AcquireCtx(&fasthttp.RequestCtx{})
 
-	response, err := client.Do(request)
+	// Set the request body in the Fiber context
+	request := &pb.SignUpRequest{
+		Name:     "Test User1",
+		Email:    "testemail@test.com.tr",
+		Password: "test123",
+	}
+	body, err := json.Marshal(request)
 	assert.NoError(t, err)
-	assert.NotNil(t, response)
 
-	body, err := io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
+	// Set the content-type to JSON
+	fiberContext.Request().SetBody(body)
+	fiberContext.Request().Header.Set("Content-Type", "application/json")
 
-	current := time.Now().Unix()
-	signUp := new(pb.User)
-	err = json.Unmarshal(body, signUp)
+	// Test the SignUp handler
+	err = handler.SignUp(fiberContext)
 	assert.NoError(t, err)
-	assert.NotNil(t, signUp)
-	assert.Equal(t, jsonSignIn["Name"], signUp.GetName())
-	assert.Equal(t, jsonSignIn["Email"], signUp.GetEmail())
-	assert.Equal(t, signUp.GetRole(), "user")
-	assert.Greater(t, current, signUp.GetCreated())
-	assert.Greater(t, current, signUp.GetUpdated())
+
+	// Assert that the SignUp functions were called with the expected parameters
+	assert.True(t, mockAuthWrapper.SignUpFuncCalled, "SignUp function of mockWrapper should be called")
+
+	// Release the Fiber context
+	app.ReleaseCtx(fiberContext)
 }
 
-// TestSignIn tests the user login process.
 func TestSignIn(t *testing.T) {
-	url := authAddr + "/signin"
-	jsonSignIn := map[string]string{
-		"Name":     "Test User",
-		"Email":    "testuser@email.com",
-		"Password": "testuser",
+	// Create a custom mock client wrapper for Auth Service
+	mockAuthWrapper := &MockAuthServiceClientWrapper{}
+
+	// Create handlers using the custom mock client wrapper
+	handler := handlers.NewAuthHandlers(mockAuthWrapper)
+
+	// Set Auth Service Client in the mockWrapper
+	mockAuthWrapper.SignInFunc = func(ctx context.Context, req *pb.SignInRequest, opts ...grpc.CallOption) (*pb.SignInResponse, error) {
+		// Simulate the behavior of the gRPC service
+		user := &pb.User{Id: "1", Name: "Test User1", Email: req.GetEmail(), Role: "user", Created: "2024-02-02T18:18:00", Updated: "2024-02-02T18:18:00"}
+		token, err := security.NewToken(user.Id)
+		if err != nil {
+			return nil, util.ErrFailedSignIn
+		}
+		return &pb.SignInResponse{User: user, Token: token}, nil
 	}
-	jsonSignInByte, err := json.Marshal(jsonSignIn)
-	assert.NoError(t, err)
-	payload := strings.NewReader(string(jsonSignInByte))
 
-	client := &http.Client{}
-	request, err := http.NewRequest("POST", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	// Create a Fiber context
+	app := fiber.New()
+	fiberContext := app.AcquireCtx(&fasthttp.RequestCtx{})
 
-	request.Header.Add("Content-Type", "application/json")
-	response, err := client.Do(request)
+	// Set the request body in the Fiber context
+	request := &pb.SignInRequest{
+		Email:    "testemail@test.com.tr",
+		Password: "test123",
+	}
+	body, err := json.Marshal(request)
 	assert.NoError(t, err)
-	assert.NotNil(t, response)
 
-	body, err := io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
+	// Set the content-type to JSON
+	fiberContext.Request().SetBody(body)
+	fiberContext.Request().Header.Set("Content-Type", "application/json")
 
-	signIn := new(pb.SignInResponse)
-	err = json.Unmarshal(body, signIn)
+	// Test the SignIn handler
+	err = handler.SignIn(fiberContext)
 	assert.NoError(t, err)
-	assert.NotNil(t, signIn)
-	assert.NotEmpty(t, signIn.GetToken())
-	assert.Equal(t, jsonSignIn["Name"], signIn.User.GetName())
-	assert.Equal(t, jsonSignIn["Email"], signIn.User.GetEmail())
+
+	// Assert that the SignIn functions were called with the expected parameters
+	assert.True(t, mockAuthWrapper.SignInFuncCalled, "SignIn function of mockWrapper should be called")
+
+	// Release the Fiber context
+	app.ReleaseCtx(fiberContext)
 }
 
-// TestGetUser tests pull user by id.
 func TestGetUser(t *testing.T) {
-	// get token
-	url := authAddr + "/signin"
-	jsonSignIn := map[string]string{
-		"Name":     "Test User",
-		"Email":    "testuser@email.com",
-		"Password": "testuser",
+	// Create a custom mock client wrapper for Auth Service
+	mockAuthWrapper := &MockAuthServiceClientWrapper{}
+
+	// Create handlers using the custom mock client wrapper
+	handler := handlers.NewAuthHandlers(mockAuthWrapper)
+
+	// Set Auth Service Client in the mockWrapper
+	mockAuthWrapper.GetUserRoleFunc = func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.GetUserRoleResponse{Role: "admin"}, nil
 	}
-	jsonSignInByte, err := json.Marshal(jsonSignIn)
-	assert.NoError(t, err)
-	payload := strings.NewReader(string(jsonSignInByte))
 
-	client := &http.Client{}
-	request, err := http.NewRequest("POST", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	mockAuthWrapper.GetUserFunc = func(ctx context.Context, req *pb.GetUserRequest, opts ...grpc.CallOption) (*pb.User, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.User{Id: "1", Name: "Test User1", Email: req.GetEmail(), Role: "user", Created: "2024-02-02T18:18:00", Updated: "2024-02-02T18:18:00"}, nil
+	}
 
-	request.Header.Add("Content-Type", "application/json")
-	response, err := client.Do(request)
-	assert.NoError(t, err)
-	assert.NotNil(t, response)
+	// Create a Fiber context
+	app := fiber.New()
+	fiberContext := app.AcquireCtx(&fasthttp.RequestCtx{})
 
-	body, err := io.ReadAll(response.Body)
+	// Set the request headers in the Fiber context
+	userId := bson.NewObjectId()
+	token, err := security.NewToken(userId.Hex())
 	assert.NoError(t, err)
-	assert.NotNil(t, body)
+	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
+	fiberContext.Request().Header.Set("Email", "testemail1@test.com.tr")
 
-	signIn := new(pb.SignInResponse)
-	err = json.Unmarshal(body, signIn)
+	// Test the GetUser handler
+	err = handler.GetUser(fiberContext)
 	assert.NoError(t, err)
-	assert.NotNil(t, signIn)
-	assert.NotEmpty(t, signIn.User.GetId())
-	assert.NotEmpty(t, signIn.GetToken())
 
-	// get user
-	url = authAddr + "/user"
-	request, err = http.NewRequest("GET", url, nil)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	// Assert that the GetUserRole and GetUser functions were called with the expected parameters
+	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockWrapper should be called")
+	assert.True(t, mockAuthWrapper.GetUserFuncCalled, "GetUser function of mockWrapper should be called")
 
-	authorization := "Bearer " + signIn.GetToken()
-	request.Header.Add("Authorization", authorization)
-	request.Header.Add("Email", "testuser@email.com")
-	response, err = client.Do(request)
-	assert.NoError(t, err)
-	assert.NotNil(t, response)
-
-	body, err = io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
-
-	getUserResponse := new(pb.User)
-	err = json.Unmarshal(body, getUserResponse)
-	assert.NoError(t, err)
-	assert.NotNil(t, getUserResponse)
-	assert.Equal(t, signIn.User.GetId(), getUserResponse.GetId())
-	assert.Equal(t, signIn.User.GetName(), getUserResponse.GetName())
-	assert.Equal(t, signIn.User.GetEmail(), getUserResponse.GetEmail())
-	assert.Equal(t, signIn.User.GetCreated(), getUserResponse.GetCreated())
-	assert.Equal(t, signIn.User.GetUpdated(), getUserResponse.GetUpdated())
-
+	// Release the Fiber context
+	app.ReleaseCtx(fiberContext)
 }
 
-// TestDeleteUser tests delete the user.
 func TestDeleteUser(t *testing.T) {
+	// Create a custom mock client wrapper for Auth Service
+	mockAuthWrapper := &MockAuthServiceClientWrapper{}
 
-	// get token
-	url := authAddr + "/signin"
-	jsonSignIn := map[string]string{
-		"Name":     "New Test User",
-		"Email":    "testuser@email.com",
-		"Password": "testuser",
+	// Create handlers using the custom mock client wrapper
+	handler := handlers.NewAuthHandlers(mockAuthWrapper)
+
+	// Set Auth Service Client in the mockWrapper
+	mockAuthWrapper.GetUserRoleFunc = func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.GetUserRoleResponse{Role: "admin"}, nil
 	}
-	jsonSignInByte, err := json.Marshal(jsonSignIn)
-	assert.NoError(t, err)
-	payload := strings.NewReader(string(jsonSignInByte))
 
-	client := &http.Client{}
-	request, err := http.NewRequest("POST", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	mockAuthWrapper.DeleteUserFunc = func(ctx context.Context, req *pb.DeleteUserRequest, opts ...grpc.CallOption) (*pb.DeleteUserResponse, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.DeleteUserResponse{Email: req.GetEmail()}, nil
+	}
 
-	request.Header.Add("Content-Type", "application/json")
-	response, err := client.Do(request)
-	assert.NoError(t, err)
-	assert.NotNil(t, response)
+	// Create a Fiber context
+	app := fiber.New()
+	fiberContext := app.AcquireCtx(&fasthttp.RequestCtx{})
 
-	body, err := io.ReadAll(response.Body)
+	// Set the request headers in the Fiber context
+	userId := bson.NewObjectId()
+	token, err := security.NewToken(userId.Hex())
 	assert.NoError(t, err)
-	assert.NotNil(t, body)
+	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
+	fiberContext.Request().Header.Set("Email", "testemail1@test.com.tr")
 
-	signIn := new(pb.SignInResponse)
-	err = json.Unmarshal(body, signIn)
+	// Test the DeleteUser handler
+	err = handler.DeleteUser(fiberContext)
 	assert.NoError(t, err)
-	assert.NotNil(t, signIn)
-	assert.NotEmpty(t, signIn.User.GetId())
-	assert.NotEmpty(t, signIn.GetToken())
 
-	// delete user
-	url = authAddr + "/user"
-	request, err = http.NewRequest("DELETE", url, nil)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	// Assert that the GetUserRole and DeleteUser functions were called with the expected parameters
+	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockWrapper should be called")
+	assert.True(t, mockAuthWrapper.DeleteUserFuncCalled, "DeleteUser function of mockWrapper should be called")
 
-	authorization := "Bearer " + signIn.GetToken()
-	request.Header.Add("Authorization", authorization)
-	request.Header.Add("Email", "testuser@email.com")
-	response, err = client.Do(request)
-	assert.NoError(t, err)
-	assert.NotNil(t, response)
-
-	body, err = io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
-
-	deletedUser := new(pb.DeleteUserResponse)
-	err = json.Unmarshal(body, deletedUser)
-	assert.NoError(t, err)
-	assert.NotNil(t, deletedUser)
+	// Release the Fiber context
+	app.ReleaseCtx(fiberContext)
 }
 
-// TestChangeUserRole tests change the user role.
 func TestChangeUserRole(t *testing.T) {
-	// get token
-	url := authAddr + "/signin"
-	jsonSignIn := map[string]string{
-		"Name":     "New Test User",
-		"Email":    "testuser@email.com",
-		"Password": "testuser",
+	// Create a custom mock client wrapper for Auth Service
+	mockAuthWrapper := &MockAuthServiceClientWrapper{}
+
+	// Create handlers using the custom mock client wrapper
+	handler := handlers.NewAuthHandlers(mockAuthWrapper)
+
+	// Set Auth Service Client in the mockWrapper
+	mockAuthWrapper.GetUserRoleFunc = func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.GetUserRoleResponse{Role: "admin"}, nil
 	}
-	jsonSignInByte, err := json.Marshal(jsonSignIn)
-	assert.NoError(t, err)
-	payload := strings.NewReader(string(jsonSignInByte))
 
-	client := &http.Client{}
-	request, err := http.NewRequest("POST", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
-
-	request.Header.Add("Content-Type", "application/json")
-	response, err := client.Do(request)
-	assert.NoError(t, err)
-	assert.NotNil(t, response)
-
-	body, err := io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
-
-	signIn := new(pb.SignInResponse)
-	err = json.Unmarshal(body, signIn)
-	assert.NoError(t, err)
-	assert.NotNil(t, signIn)
-	assert.NotEmpty(t, signIn.User.GetId())
-	assert.NotEmpty(t, signIn.GetToken())
-
-	// change user role
-	url = authAddr + "/user"
-	jsonUpdateUser := map[string]interface{}{
-		"Email": "testuser@email.com",
-		"Role":  "admin",
+	mockAuthWrapper.ChangeUserRoleFunc = func(ctx context.Context, req *pb.ChangeUserRoleRequest, opts ...grpc.CallOption) (*pb.User, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.User{Id: "1", Name: "Test User1", Email: req.GetEmail(), Role: req.GetRole(), Created: "2024-02-02T18:18:00", Updated: "2024-02-02T18:18:00"}, nil
 	}
-	jsonUpdateUserByte, err := json.Marshal(jsonUpdateUser)
-	assert.NoError(t, err)
-	payload = strings.NewReader(string(jsonUpdateUserByte))
 
-	request, err = http.NewRequest("PATCH", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	// Create a Fiber context
+	app := fiber.New()
+	fiberContext := app.AcquireCtx(&fasthttp.RequestCtx{})
 
-	request.Header.Add("Content-Type", "application/json")
-	authorization := "Bearer " + signIn.GetToken()
-	request.Header.Add("Authorization", authorization)
-	response, err = client.Do(request)
+	// Set the request body in the Fiber context
+	request := &pb.ChangeUserRoleRequest{
+		Email: "testemail@test.com.tr",
+		Role:  "admin",
+	}
+	body, err := json.Marshal(request)
 	assert.NoError(t, err)
-	assert.NotNil(t, response)
 
-	body, err = io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
+	// Set the content-type to JSON
+	fiberContext.Request().SetBody(body)
+	fiberContext.Request().Header.Set("Content-Type", "application/json")
 
-	changedUser := new(pb.User)
-	err = json.Unmarshal(body, changedUser)
+	// Set the request headers in the Fiber context
+	userId := bson.NewObjectId()
+	token, err := security.NewToken(userId.Hex())
 	assert.NoError(t, err)
-	assert.NotNil(t, changedUser)
+	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
+
+	// Test the ChangeUserRole handler
+	err = handler.ChangeUserRole(fiberContext)
+	assert.NoError(t, err)
+
+	// Assert that the GetUserRole and ChangeUserRole functions were called with the expected parameters
+	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockWrapper should be called")
+	assert.True(t, mockAuthWrapper.ChangeUserRoleFuncCalled, "ChangeUserRole function of mockWrapper should be called")
+
+	// Release the Fiber context
+	app.ReleaseCtx(fiberContext)
 }
 
-// TestUpdateUserPasword tests update the user password.
-func TestUpdateUserPasword(t *testing.T) {
-	// get token
-	url := authAddr + "/signin"
-	jsonSignIn := map[string]string{
-		"Name":     "Test User",
-		"Email":    "testuser@email.com",
-		"Password": "testuser",
+func TestUpdateUserPassword(t *testing.T) {
+	// Create a custom mock client wrapper for Auth Service
+	mockAuthWrapper := &MockAuthServiceClientWrapper{}
+
+	// Create handlers using the custom mock client wrapper
+	handler := handlers.NewAuthHandlers(mockAuthWrapper)
+
+	mockAuthWrapper.UpdateUserPasswordFunc = func(ctx context.Context, req *pb.UpdateUserPasswordRequest, opts ...grpc.CallOption) (*pb.User, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.User{Id: "1", Name: "Test User1", Email: req.GetEmail(), Role: "user", Created: "2024-02-02T18:18:00", Updated: "2024-02-02T18:18:00"}, nil
 	}
-	jsonSignInByte, err := json.Marshal(jsonSignIn)
-	assert.NoError(t, err)
-	payload := strings.NewReader(string(jsonSignInByte))
 
-	client := &http.Client{}
-	request, err := http.NewRequest("POST", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	// Create a Fiber context
+	app := fiber.New()
+	fiberContext := app.AcquireCtx(&fasthttp.RequestCtx{})
 
-	request.Header.Add("Content-Type", "application/json")
-	response, err := client.Do(request)
-	assert.NoError(t, err)
-	assert.NotNil(t, response)
-
-	body, err := io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
-
-	signIn := new(pb.SignInResponse)
-	err = json.Unmarshal(body, signIn)
-	assert.NoError(t, err)
-	assert.NotNil(t, signIn)
-	assert.NotEmpty(t, signIn.User.GetId())
-	assert.NotEmpty(t, signIn.GetToken())
-
-	// update user password
-	url = authAddr + "/user_pu"
-	jsonUpdateUser := map[string]interface{}{
-		"Email":       "testuser@email.com",
-		"Password":    "testuser",
-		"NewPassword": "newtestuser",
+	// Set the request body in the Fiber context
+	request := &pb.UpdateUserPasswordRequest{
+		Email:       "testemail@test.com.tr",
+		Password:    "old-password",
+		NewPassword: "new-paswword",
 	}
-	jsonUpdateUserByte, err := json.Marshal(jsonUpdateUser)
+	body, err := json.Marshal(request)
 	assert.NoError(t, err)
-	payload = strings.NewReader(string(jsonUpdateUserByte))
 
-	request, err = http.NewRequest("POST", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	// Set the content-type to JSON
+	fiberContext.Request().SetBody(body)
+	fiberContext.Request().Header.Set("Content-Type", "application/json")
 
-	request.Header.Add("Content-Type", "application/json")
-	authorization := "Bearer " + signIn.GetToken()
-	request.Header.Add("Authorization", authorization)
-	response, err = client.Do(request)
+	// Test the UpdateUserPassword handler
+	err = handler.UpdateUserPassword(fiberContext)
 	assert.NoError(t, err)
-	assert.NotNil(t, response)
 
-	body, err = io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
+	// Assert that the UpdateUserPassword functions were called with the expected parameters
+	assert.True(t, mockAuthWrapper.UpdateUserPasswordFuncCalled, "UpdateUserPassword function of mockWrapper should be called")
 
-	updatedUser := new(pb.User)
-	err = json.Unmarshal(body, updatedUser)
-	assert.NoError(t, err)
-	assert.NotNil(t, updatedUser)
+	// Release the Fiber context
+	app.ReleaseCtx(fiberContext)
+
 }
 
-// TestUpdateUserEmail tests update the user email.
 func TestUpdateUserEmail(t *testing.T) {
-	// get token
-	url := authAddr + "/signin"
-	jsonSignIn := map[string]string{
-		"Name":     "Test User",
-		"Email":    "testuser@email.com",
-		"Password": "testuser",
+	// Create a custom mock client wrapper for Auth Service
+	mockAuthWrapper := &MockAuthServiceClientWrapper{}
+
+	// Create handlers using the custom mock client wrapper
+	handler := handlers.NewAuthHandlers(mockAuthWrapper)
+
+	mockAuthWrapper.UpdateUserEmailFunc = func(ctx context.Context, req *pb.UpdateUserEmailRequest, opts ...grpc.CallOption) (*pb.User, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.User{Id: "1", Name: "Test User1", Email: req.GetEmail(), Role: "user", Created: "2024-02-02T18:18:00", Updated: "2024-02-02T18:18:00"}, nil
 	}
-	jsonSignInByte, err := json.Marshal(jsonSignIn)
-	assert.NoError(t, err)
-	payload := strings.NewReader(string(jsonSignInByte))
 
-	client := &http.Client{}
-	request, err := http.NewRequest("POST", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	// Create a Fiber context
+	app := fiber.New()
+	fiberContext := app.AcquireCtx(&fasthttp.RequestCtx{})
 
-	request.Header.Add("Content-Type", "application/json")
-	response, err := client.Do(request)
-	assert.NoError(t, err)
-	assert.NotNil(t, response)
-
-	body, err := io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
-
-	signIn := new(pb.SignInResponse)
-	err = json.Unmarshal(body, signIn)
-	assert.NoError(t, err)
-	assert.NotNil(t, signIn)
-	assert.NotEmpty(t, signIn.User.GetId())
-	assert.NotEmpty(t, signIn.GetToken())
-
-	// update user email
-	url = authAddr + "/user_eu"
-	jsonUpdateUser := map[string]interface{}{
-		"Email":    "testuser@email.com",
-		"NewEmail": "newtestuser@email.com",
-		"Password": "testuser",
+	// Set the request body in the Fiber context
+	request := &pb.UpdateUserEmailRequest{
+		Email:    "testemail@test.com.tr",
+		NewEmail: "new-testemail@test.com.tr",
+		Password: "paswword",
 	}
-	jsonUpdateUserByte, err := json.Marshal(jsonUpdateUser)
+	body, err := json.Marshal(request)
 	assert.NoError(t, err)
-	payload = strings.NewReader(string(jsonUpdateUserByte))
 
-	request, err = http.NewRequest("POST", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	// Set the content-type to JSON
+	fiberContext.Request().SetBody(body)
+	fiberContext.Request().Header.Set("Content-Type", "application/json")
 
-	request.Header.Add("Content-Type", "application/json")
-	authorization := "Bearer " + signIn.GetToken()
-	request.Header.Add("Authorization", authorization)
-	response, err = client.Do(request)
+	// Test the UpdateUserEmail handler
+	err = handler.UpdateUserEmail(fiberContext)
 	assert.NoError(t, err)
-	assert.NotNil(t, response)
 
-	body, err = io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
+	// Assert that the UpdateUserEmail functions were called with the expected parameters
+	assert.True(t, mockAuthWrapper.UpdateUserEmailFuncCalled, "UpdateUserEmail function of mockWrapper should be called")
 
-	updatedUser := new(pb.User)
-	err = json.Unmarshal(body, updatedUser)
-	assert.NoError(t, err)
-	assert.NotNil(t, updatedUser)
+	// Release the Fiber context
+	app.ReleaseCtx(fiberContext)
+
 }
 
-// TestUpdateUserName tests update the user email.
 func TestUpdateUserName(t *testing.T) {
-	// get token
-	url := authAddr + "/signin"
-	jsonSignIn := map[string]string{
-		"Name":     "Test User",
-		"Email":    "testuser@email.com",
-		"Password": "testuser",
+	// Create a custom mock client wrapper for Auth Service
+	mockAuthWrapper := &MockAuthServiceClientWrapper{}
+
+	// Create handlers using the custom mock client wrapper
+	handler := handlers.NewAuthHandlers(mockAuthWrapper)
+
+	mockAuthWrapper.UpdateUserNameFunc = func(ctx context.Context, req *pb.UpdateUserNameRequest, opts ...grpc.CallOption) (*pb.User, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.User{Id: "1", Name: req.GetName(), Email: req.GetEmail(), Role: "user", Created: "2024-02-02T18:18:00", Updated: "2024-02-02T18:18:00"}, nil
 	}
-	jsonSignInByte, err := json.Marshal(jsonSignIn)
-	assert.NoError(t, err)
-	payload := strings.NewReader(string(jsonSignInByte))
 
-	client := &http.Client{}
-	request, err := http.NewRequest("POST", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	// Create a Fiber context
+	app := fiber.New()
+	fiberContext := app.AcquireCtx(&fasthttp.RequestCtx{})
 
-	request.Header.Add("Content-Type", "application/json")
-	response, err := client.Do(request)
-	assert.NoError(t, err)
-	assert.NotNil(t, response)
-
-	body, err := io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
-
-	signIn := new(pb.SignInResponse)
-	err = json.Unmarshal(body, signIn)
-	assert.NoError(t, err)
-	assert.NotNil(t, signIn)
-	assert.NotEmpty(t, signIn.User.GetId())
-	assert.NotEmpty(t, signIn.GetToken())
-
-	// update user name
-	url = authAddr + "/user_nu"
-	jsonUpdateUser := map[string]interface{}{
-		"Email":    "testuser@email.com",
-		"Name":     "newtestuser",
-		"Password": "testuser",
+	// Set the request body in the Fiber context
+	request := &pb.UpdateUserNameRequest{
+		Email:    "testemail@test.com.tr",
+		Name:     "New Test User 1",
+		Password: "paswword",
 	}
-	jsonUpdateUserByte, err := json.Marshal(jsonUpdateUser)
+	body, err := json.Marshal(request)
 	assert.NoError(t, err)
-	payload = strings.NewReader(string(jsonUpdateUserByte))
 
-	request, err = http.NewRequest("POST", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	// Set the content-type to JSON
+	fiberContext.Request().SetBody(body)
+	fiberContext.Request().Header.Set("Content-Type", "application/json")
 
-	request.Header.Add("Content-Type", "application/json")
-	authorization := "Bearer " + signIn.GetToken()
-	request.Header.Add("Authorization", authorization)
-	response, err = client.Do(request)
+	// Test the UpdateUserName handler
+	err = handler.UpdateUserName(fiberContext)
 	assert.NoError(t, err)
-	assert.NotNil(t, response)
 
-	body, err = io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
+	// Assert that the UpdateUserName functions were called with the expected parameters
+	assert.True(t, mockAuthWrapper.UpdateUserNameFuncCalled, "UpdateUserName function of mockWrapper should be called")
 
-	updatedUser := new(pb.User)
-	err = json.Unmarshal(body, updatedUser)
-	assert.NoError(t, err)
-	assert.NotNil(t, updatedUser)
+	// Release the Fiber context
+	app.ReleaseCtx(fiberContext)
+
 }
 
-// TestGetUsers test pull all users from database.
 func TestGetUsers(t *testing.T) {
-	// get token
-	url := authAddr + "/signin"
-	jsonSignIn := map[string]string{
-		"Name":     "Test User",
-		"Email":    "testuser@email.com",
-		"Password": "testuser",
+	// Create a custom mock client wrapper for Auth Service
+	mockAuthWrapper := &MockAuthServiceClientWrapper{}
+
+	// Create handlers using the custom mock client wrapper
+	handler := handlers.NewAuthHandlers(mockAuthWrapper)
+
+	// Set Auth Service Client in the mockWrapper
+	mockAuthWrapper.GetUserRoleFunc = func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
+		// Simulate the behavior of the gRPC service
+		return &pb.GetUserRoleResponse{Role: "admin"}, nil
 	}
-	jsonSignInByte, err := json.Marshal(jsonSignIn)
-	assert.NoError(t, err)
-	payload := strings.NewReader(string(jsonSignInByte))
 
-	client := &http.Client{}
-	request, err := http.NewRequest("POST", url, payload)
-	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	mockAuthWrapper.ListUsersFunc = func(ctx context.Context, req *pb.ListUsersRequest, opts ...grpc.CallOption) (pb.AuthService_ListUsersClient, error) {
+		// Simulate the behavior of the gRPC service
+		users := []*pb.User{
+			{Id: "1", Name: "Test User1", Email: "testuser1@test.com.tr", Role: "user", Created: "2024-02-02T18:18:00", Updated: "2024-02-02T18:18:00"},
+			{Id: "2", Name: "Test User2", Email: "testuser@test.com.tr", Role: "user", Created: "2024-02-02T18:18:00", Updated: "2024-02-02T18:18:00"},
+		}
 
-	request.Header.Add("Content-Type", "application/json")
-	response, err := client.Do(request)
-	assert.NoError(t, err)
-	assert.NotNil(t, response)
+		mockStream := &MockAuthService_StreamClientWrapper{
+			users: users,
+		}
 
-	body, err := io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
+		return mockStream, nil
+	}
 
-	signIn := new(pb.SignInResponse)
-	err = json.Unmarshal(body, signIn)
-	assert.NoError(t, err)
-	assert.NotNil(t, signIn)
-	assert.NotEmpty(t, signIn.GetToken())
+	// Create a Fiber context
+	app := fiber.New()
+	fiberContext := app.AcquireCtx(&fasthttp.RequestCtx{})
 
-	// get all users
-	url = authAddr + "/users"
-	request, err = http.NewRequest("GET", url, nil)
+	// Set the request headers in the Fiber context
+	userId := bson.NewObjectId()
+	token, err := security.NewToken(userId.Hex())
 	assert.NoError(t, err)
-	assert.NotNil(t, request)
+	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
 
-	authorization := "Bearer " + signIn.GetToken()
-	request.Header.Add("Authorization", authorization)
-	response, err = client.Do(request)
+	// Test the ListUsers handler
+	err = handler.ListUsers(fiberContext)
 	assert.NoError(t, err)
-	assert.NotNil(t, response)
 
-	body, err = io.ReadAll(response.Body)
-	assert.NoError(t, err)
-	assert.NotNil(t, body)
+	// Assert that the GetUserRole and ListUsers functions were called with the expected parameters
+	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockWrapper should be called")
+	assert.True(t, mockAuthWrapper.ListUsersFuncCalled, "ListUsers function of mockWrapper should be called")
 
-	getedUsers := new([]pb.User)
-	err = json.Unmarshal(body, getedUsers)
-	assert.NoError(t, err)
-	assert.NotNil(t, getedUsers)
+	// Release the Fiber context
+	app.ReleaseCtx(fiberContext)
 }

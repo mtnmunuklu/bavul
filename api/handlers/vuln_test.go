@@ -1,4 +1,4 @@
-package handlers
+package handlers_test
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/mtnmunuklu/bavul/api/handlers"
 	"github.com/mtnmunuklu/bavul/pb"
 	"github.com/mtnmunuklu/bavul/security"
 	"github.com/stretchr/testify/assert"
@@ -16,110 +17,6 @@ import (
 	"google.golang.org/grpc/metadata"
 	"gopkg.in/mgo.v2/bson"
 )
-
-// Custom mock client that implements the pb.AuthServiceClient interface
-type MockAuthServiceClientWrapper struct {
-	ChangeUserRoleFunc           func(ctx context.Context, req *pb.ChangeUserRoleRequest, opts ...grpc.CallOption) (*pb.User, error)
-	GetUserRoleFunc              func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error)
-	ListUsersFunc                func(ctx context.Context, req *pb.ListUsersRequest, opts ...grpc.CallOption) (pb.AuthService_ListUsersClient, error)
-	UpdateUserPasswordFunc       func(ctx context.Context, req *pb.UpdateUserPasswordRequest, opts ...grpc.CallOption) (*pb.User, error)
-	UpdateUserEmailFunc          func(ctx context.Context, req *pb.UpdateUserEmailRequest, opts ...grpc.CallOption) (*pb.User, error)
-	UpdateUserNameFunc           func(ctx context.Context, req *pb.UpdateUserNameRequest, opts ...grpc.CallOption) (*pb.User, error)
-	SignUpFunc                   func(ctx context.Context, req *pb.SignUpRequest, opts ...grpc.CallOption) (*pb.User, error)
-	SignInFunc                   func(ctx context.Context, req *pb.SignInRequest, opts ...grpc.CallOption) (*pb.SignInResponse, error)
-	DeleteUserFunc               func(ctx context.Context, req *pb.DeleteUserRequest, opts ...grpc.CallOption) (*pb.DeleteUserResponse, error)
-	GetUserFunc                  func(ctx context.Context, req *pb.GetUserRequest, opts ...grpc.CallOption) (*pb.User, error)
-	ChangeUserRoleFuncCalled     bool
-	GetUserRoleFuncCalled        bool
-	ListUsersFuncCalled          bool
-	UpdateUserPasswordFuncCalled bool
-	UpdateUserEmailFuncCalled    bool
-	UpdateUserNameFuncCalled     bool
-	SignUpFuncCalled             bool
-	SignInFuncCalled             bool
-	DeleteUserFuncCalled         bool
-	GetUserFuncCalled            bool
-}
-
-func (c *MockAuthServiceClientWrapper) ChangeUserRole(ctx context.Context, req *pb.ChangeUserRoleRequest, opts ...grpc.CallOption) (*pb.User, error) {
-	c.ChangeUserRoleFuncCalled = true
-	if c.ChangeUserRoleFunc != nil {
-		return c.ChangeUserRoleFunc(ctx, req, opts...)
-	}
-	return nil, nil
-}
-
-func (c *MockAuthServiceClientWrapper) GetUserRole(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
-	c.GetUserRoleFuncCalled = true
-	if c.GetUserRoleFunc != nil {
-		return c.GetUserRoleFunc(ctx, req, opts...)
-	}
-	return nil, nil
-}
-
-func (c *MockAuthServiceClientWrapper) ListUsers(ctx context.Context, req *pb.ListUsersRequest, opts ...grpc.CallOption) (pb.AuthService_ListUsersClient, error) {
-	c.ListUsersFuncCalled = true
-	if c.ListUsersFunc != nil {
-		return c.ListUsersFunc(ctx, req, opts...)
-	}
-	return nil, nil
-}
-
-func (c *MockAuthServiceClientWrapper) UpdateUserPassword(ctx context.Context, req *pb.UpdateUserPasswordRequest, opts ...grpc.CallOption) (*pb.User, error) {
-	c.UpdateUserPasswordFuncCalled = true
-	if c.UpdateUserPasswordFunc != nil {
-		return c.UpdateUserPasswordFunc(ctx, req, opts...)
-	}
-	return nil, nil
-}
-
-func (c *MockAuthServiceClientWrapper) UpdateUserEmail(ctx context.Context, req *pb.UpdateUserEmailRequest, opts ...grpc.CallOption) (*pb.User, error) {
-	c.UpdateUserEmailFuncCalled = true
-	if c.UpdateUserEmailFunc != nil {
-		return c.UpdateUserEmailFunc(ctx, req, opts...)
-	}
-	return nil, nil
-}
-
-func (c *MockAuthServiceClientWrapper) UpdateUserName(ctx context.Context, req *pb.UpdateUserNameRequest, opts ...grpc.CallOption) (*pb.User, error) {
-	c.UpdateUserNameFuncCalled = true
-	if c.UpdateUserNameFunc != nil {
-		return c.UpdateUserNameFunc(ctx, req, opts...)
-	}
-	return nil, nil
-}
-
-func (c *MockAuthServiceClientWrapper) SignUp(ctx context.Context, req *pb.SignUpRequest, opts ...grpc.CallOption) (*pb.User, error) {
-	c.SignUpFuncCalled = true
-	if c.SignUpFunc != nil {
-		return c.SignUpFunc(ctx, req, opts...)
-	}
-	return nil, nil
-}
-
-func (c *MockAuthServiceClientWrapper) SignIn(ctx context.Context, req *pb.SignInRequest, opts ...grpc.CallOption) (*pb.SignInResponse, error) {
-	c.SignInFuncCalled = true
-	if c.SignInFunc != nil {
-		return c.SignInFunc(ctx, req, opts...)
-	}
-	return nil, nil
-}
-
-func (c *MockAuthServiceClientWrapper) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest, opts ...grpc.CallOption) (*pb.DeleteUserResponse, error) {
-	c.DeleteUserFuncCalled = true
-	if c.DeleteUserFunc != nil {
-		return c.DeleteUserFunc(ctx, req, opts...)
-	}
-	return nil, nil
-}
-
-func (c *MockAuthServiceClientWrapper) GetUser(ctx context.Context, req *pb.GetUserRequest, opts ...grpc.CallOption) (*pb.User, error) {
-	c.GetUserFuncCalled = true
-	if c.GetUserFunc != nil {
-		return c.GetUserFunc(ctx, req, opts...)
-	}
-	return nil, nil
-}
 
 // Custom mock client that implements the pb.VulnServiceClient interface
 type MockVulnServiceClientWrapper struct {
@@ -254,7 +151,7 @@ func TestAddCVE(t *testing.T) {
 	mockVulnWrapper := &MockVulnServiceClientWrapper{}
 
 	// Create handlers using the custom mock client wrapper
-	handler := NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
+	handler := handlers.NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
 
 	// Set Auth Service Client in the mockWrapper
 	mockAuthWrapper.GetUserRoleFunc = func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
@@ -315,7 +212,7 @@ func TestGetAllCVEs(t *testing.T) {
 	mockVulnWrapper := &MockVulnServiceClientWrapper{}
 
 	// Create handlers using the custom mock client wrapper
-	handler := NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
+	handler := handlers.NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
 
 	// Set Auth Service Client in the mockWrapper
 	mockAuthWrapper.GetUserRoleFunc = func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
@@ -369,7 +266,7 @@ func TestDeleteCVE(t *testing.T) {
 	mockVulnWrapper := &MockVulnServiceClientWrapper{}
 
 	// Create handlers using the custom mock client wrapper
-	handler := NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
+	handler := handlers.NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
 
 	// Set Auth Service Client in the mockWrapper
 	mockAuthWrapper.GetUserRoleFunc = func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
@@ -416,7 +313,7 @@ func TestUpdateCVE(t *testing.T) {
 	mockVulnWrapper := &MockVulnServiceClientWrapper{}
 
 	// Create handlers using the custom mock client wrapper
-	handler := NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
+	handler := handlers.NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
 
 	// Set Auth Service Client in the mockWrapper
 	mockAuthWrapper.GetUserRoleFunc = func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
@@ -473,7 +370,7 @@ func TestFetchNVDFeeds(t *testing.T) {
 	mockVulnWrapper := &MockVulnServiceClientWrapper{}
 
 	// Create handlers using the custom mock client wrapper
-	handler := NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
+	handler := handlers.NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
 
 	// Set Auth Service Client in the mockWrapper
 	mockAuthWrapper.GetUserRoleFunc = func(ctx context.Context, req *pb.GetUserRoleRequest, opts ...grpc.CallOption) (*pb.GetUserRoleResponse, error) {
@@ -529,7 +426,7 @@ func TestSearchCVE(t *testing.T) {
 	mockVulnWrapper := &MockVulnServiceClientWrapper{}
 
 	// Create handlers using the custom mock client wrapper
-	handler := NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
+	handler := handlers.NewVulnHandlers(mockAuthWrapper, mockVulnWrapper)
 
 	// Set Vuln Service Client in the mockWrapper
 	mockVulnWrapper.SearchCVEFunc = func(ctx context.Context, req *pb.SearchCVERequest, opts ...grpc.CallOption) (pb.VulnService_SearchCVEClient, error) {

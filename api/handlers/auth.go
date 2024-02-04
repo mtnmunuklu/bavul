@@ -19,7 +19,7 @@ type AuthHandlers interface {
 	UpdateUserPassword(c *fiber.Ctx) error
 	UpdateUserEmail(c *fiber.Ctx) error
 	UpdateUserName(c *fiber.Ctx) error
-	GetUsers(c *fiber.Ctx) error
+	ListUsers(c *fiber.Ctx) error
 }
 
 // authHandlers provides a connection with authentication service over proto buffer.
@@ -193,8 +193,8 @@ func (h *authHandlers) UpdateUserName(c *fiber.Ctx) error {
 	return util.WriteAsJSON(c, http.StatusOK, updatedUser)
 }
 
-// GetUsers lists all users.
-func (h *authHandlers) GetUsers(c *fiber.Ctx) error {
+// ListUsers lists all users.
+func (h *authHandlers) ListUsers(c *fiber.Ctx) error {
 	userId, err := util.GetUserIDFromToken(c)
 	if err != nil {
 		return util.WriteError(c, http.StatusBadRequest, err)

@@ -76,7 +76,7 @@ func NewAuthRoutes(authHandlers handlers.AuthHandlers) []*Route {
 			Method: http.MethodGet,
 			Path:   "/users",
 			Handler: func(c *fiber.Ctx) error {
-				return authHandlers.GetUsers(c)
+				return authHandlers.ListUsers(c)
 			},
 			AuthRequired: true,
 		},
