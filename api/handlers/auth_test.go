@@ -526,7 +526,7 @@ func TestUpdateUserName(t *testing.T) {
 
 }
 
-func TestGetUsers(t *testing.T) {
+func TestListUsers(t *testing.T) {
 	// Create a custom mock client wrapper for Auth Service
 	mockAuthWrapper := &MockAuthServiceClientWrapper{}
 
