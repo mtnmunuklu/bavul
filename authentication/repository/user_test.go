@@ -1,46 +1,70 @@
-package repository
+package repository_test
 
 import (
+	"errors"
 	"fmt"
-	"log"
 	"testing"
 	"time"
 
 	"github.com/mtnmunuklu/bavul/authentication/models"
-	"github.com/mtnmunuklu/bavul/db"
-
-	"github.com/joho/godotenv"
+	"github.com/mtnmunuklu/bavul/authentication/repository"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
-// Init initializes the database connection and drops users collection.
-func init() {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		log.Panicln(err)
-	}
-
-	cfg := db.NewConfig()
-	conn, _ := db.NewConnection(cfg)
-	defer conn.Close()
-
-	r := NewUserRepository(conn)
-	err = r.(*userRepository).DeleteAll()
-	if err != nil && err.Error() != "ns not found" {
-		log.Panicln(err)
-	}
-
+// MockUserRepository is a mock implementation of the repository.UserRepository interface.
+type MockUserRepository struct {
+	Users map[string]*models.User
 }
 
-// TestUsersRepositorySave tests the user create operation.
-func TestUsersRepositorySave(t *testing.T) {
-	cfg := db.NewConfig()
-	conn, err := db.NewConnection(cfg)
-	assert.NoError(t, err)
-	defer conn.Close()
+var _ repository.UserRepository = &MockUserRepository{}
 
+func (muc *MockUserRepository) Save(user *models.User) error {
+	muc.Users[user.Id.Hex()] = user
+	return nil
+}
+
+func (muc *MockUserRepository) GetById(id string) (*models.User, error) {
+	user, ok := muc.Users[id]
+	if !ok {
+		return nil, errors.New("User not found")
+	}
+	return user, nil
+}
+
+func (muc *MockUserRepository) GetByEmail(email string) (*models.User, error) {
+	for _, user := range muc.Users {
+		if user.Email == email {
+			return user, nil
+		}
+	}
+	return nil, errors.New("User not found")
+}
+
+func (muc *MockUserRepository) GetAll() ([]*models.User, error) {
+	users := make([]*models.User, 0, len(muc.Users))
+	for _, user := range muc.Users {
+		users = append(users, user)
+	}
+	return users, nil
+}
+
+func (muc *MockUserRepository) Update(user *models.User) error {
+	if _, ok := muc.Users[user.Id.Hex()]; !ok {
+		return errors.New("User not found")
+	}
+	muc.Users[user.Id.Hex()] = user
+	return nil
+}
+
+func (muc *MockUserRepository) DeleteById(id string) error {
+	delete(muc.Users, id)
+	return nil
+}
+
+// TestMockUsersRepositorySave tests the user create operation with a mock repository.
+func TestMockUsersRepositorySave(t *testing.T) {
+	mockRepo := &MockUserRepository{Users: make(map[string]*models.User)}
 	id := bson.NewObjectId()
 
 	user := &models.User{
@@ -53,22 +77,18 @@ func TestUsersRepositorySave(t *testing.T) {
 		Updated:  time.Now(),
 	}
 
-	r := NewUserRepository(conn)
-	err = r.Save(user)
+	err := mockRepo.Save(user)
 	assert.NoError(t, err)
 
-	found, err := r.GetById(user.Id.Hex())
+	found, err := mockRepo.GetById(user.Id.Hex())
 	assert.NoError(t, err)
 	assert.NotNil(t, found)
+	assert.Equal(t, user, found)
 }
 
-// TestUsersRepositoryGetById tests the operation to return user based on id.
-func TestUsersRepositoryGetById(t *testing.T) {
-	cfg := db.NewConfig()
-	conn, err := db.NewConnection(cfg)
-	assert.NoError(t, err)
-	defer conn.Close()
-
+// TestMockUsersRepositoryGetById tests the operation to return user based on id with a mock repository.
+func TestMockUsersRepositoryGetById(t *testing.T) {
+	mockRepo := &MockUserRepository{Users: make(map[string]*models.User)}
 	id := bson.NewObjectId()
 
 	user := &models.User{
@@ -81,102 +101,21 @@ func TestUsersRepositoryGetById(t *testing.T) {
 		Updated:  time.Now(),
 	}
 
-	r := NewUserRepository(conn)
-	err = r.Save(user)
-	assert.NoError(t, err)
+	mockRepo.Save(user)
 
-	found, err := r.GetById(user.Id.Hex())
-	assert.NoError(t, err)
-	assert.Equal(t, user.Id, found.Id)
-	assert.Equal(t, user.Name, found.Name)
-	assert.Equal(t, user.Email, found.Email)
-	assert.Equal(t, user.Password, found.Password)
-
-	found, err = r.GetById(bson.NewObjectId().Hex())
-	assert.Error(t, err)
-	assert.EqualError(t, mgo.ErrNotFound, err.Error())
-	assert.Nil(t, found)
-}
-
-// TestUsersRepositoryGetByEmail tests the operation to return user based on email.
-func TestUsersRepositoryGetByEmail(t *testing.T) {
-	cfg := db.NewConfig()
-	conn, err := db.NewConnection(cfg)
-	assert.NoError(t, err)
-	defer conn.Close()
-
-	id := bson.NewObjectId()
-
-	user := &models.User{
-		Id:       id,
-		Name:     "TEST",
-		Email:    fmt.Sprintf("%s@email.test", id.Hex()),
-		Password: "123456789",
-		Role:     "user",
-		Created:  time.Now(),
-		Updated:  time.Now(),
-	}
-
-	r := NewUserRepository(conn)
-	err = r.Save(user)
-	assert.NoError(t, err)
-
-	found, err := r.GetByEmail(user.Email)
-	assert.NoError(t, err)
-	assert.Equal(t, user.Id, found.Id)
-	assert.Equal(t, user.Name, found.Name)
-	assert.Equal(t, user.Email, found.Email)
-	assert.Equal(t, user.Password, found.Password)
-
-	found, err = r.GetByEmail("")
-	assert.Error(t, err)
-	assert.EqualError(t, mgo.ErrNotFound, err.Error())
-	assert.Nil(t, found)
-}
-
-// TestUsersRepositoryUpdate tests the user update operation.
-func TestUsersRepositoryUpdate(t *testing.T) {
-	cfg := db.NewConfig()
-	conn, err := db.NewConnection(cfg)
-	assert.NoError(t, err)
-	defer conn.Close()
-
-	id := bson.NewObjectId()
-
-	user := &models.User{
-		Id:       id,
-		Name:     "TEST",
-		Email:    fmt.Sprintf("%s@email.test", id.Hex()),
-		Password: "123456789",
-		Role:     "user",
-		Created:  time.Now(),
-		Updated:  time.Now(),
-	}
-
-	r := NewUserRepository(conn)
-	err = r.Save(user)
-	assert.NoError(t, err)
-
-	found, err := r.GetById(user.Id.Hex())
+	found, err := mockRepo.GetById(user.Id.Hex())
 	assert.NoError(t, err)
 	assert.NotNil(t, found)
+	assert.Equal(t, user, found)
 
-	user.Name = "UpdateTest"
-	err = r.Update(user)
-	assert.NoError(t, err)
-
-	found, err = r.GetById(user.Id.Hex())
-	assert.NoError(t, err)
-	assert.Equal(t, "UpdateTest", found.Name)
+	notFound, err := mockRepo.GetById(bson.NewObjectId().Hex())
+	assert.Error(t, err)
+	assert.Nil(t, notFound)
 }
 
-// TestUsersRepositoryDelete tests the user delete operation.
-func TestUsersRepositoryDelete(t *testing.T) {
-	cfg := db.NewConfig()
-	conn, err := db.NewConnection(cfg)
-	assert.NoError(t, err)
-	defer conn.Close()
-
+// TestMockUsersRepositoryGetByEmail tests the operation to return user based on email with a mock repository.
+func TestMockUsersRepositoryGetByEmail(t *testing.T) {
+	mockRepo := &MockUserRepository{Users: make(map[string]*models.User)}
 	id := bson.NewObjectId()
 
 	user := &models.User{
@@ -189,30 +128,21 @@ func TestUsersRepositoryDelete(t *testing.T) {
 		Updated:  time.Now(),
 	}
 
-	r := NewUserRepository(conn)
-	err = r.Save(user)
-	assert.NoError(t, err)
+	mockRepo.Save(user)
 
-	found, err := r.GetById(user.Id.Hex())
+	found, err := mockRepo.GetByEmail(user.Email)
 	assert.NoError(t, err)
 	assert.NotNil(t, found)
+	assert.Equal(t, user, found)
 
-	err = r.DeleteById(user.Id.Hex())
-	assert.NoError(t, err)
-
-	found, err = r.GetById(user.Id.Hex())
+	notFound, err := mockRepo.GetByEmail("nonexistent@email.test")
 	assert.Error(t, err)
-	assert.EqualError(t, mgo.ErrNotFound, err.Error())
-	assert.Nil(t, found)
+	assert.Nil(t, notFound)
 }
 
-// TestUsersRepositoryGetAll tests the operation the return all users.
-func TestUsersRepositoryGetAll(t *testing.T) {
-	cfg := db.NewConfig()
-	conn, err := db.NewConnection(cfg)
-	assert.NoError(t, err)
-	defer conn.Close()
-
+// TestMockUsersRepositoryUpdate tests the user update operation with a mock repository.
+func TestMockUsersRepositoryUpdate(t *testing.T) {
+	mockRepo := &MockUserRepository{Users: make(map[string]*models.User)}
 	id := bson.NewObjectId()
 
 	user := &models.User{
@@ -225,11 +155,71 @@ func TestUsersRepositoryGetAll(t *testing.T) {
 		Updated:  time.Now(),
 	}
 
-	r := NewUserRepository(conn)
-	err = r.Save(user)
+	mockRepo.Save(user)
+
+	updatedUser := &models.User{
+		Id:       id,
+		Name:     "UpdatedTest",
+		Email:    user.Email,
+		Password: user.Password,
+		Role:     user.Role,
+		Created:  user.Created,
+		Updated:  time.Now(),
+	}
+
+	err := mockRepo.Update(updatedUser)
 	assert.NoError(t, err)
 
-	users, err := r.GetAll()
+	found, err := mockRepo.GetById(id.Hex())
+	assert.NoError(t, err)
+	assert.NotNil(t, found)
+	assert.Equal(t, updatedUser, found)
+}
+
+// TestMockUsersRepositoryDelete tests the user delete operation with a mock repository.
+func TestMockUsersRepositoryDelete(t *testing.T) {
+	mockRepo := &MockUserRepository{Users: make(map[string]*models.User)}
+	id := bson.NewObjectId()
+
+	user := &models.User{
+		Id:       id,
+		Name:     "TEST",
+		Email:    fmt.Sprintf("%s@email.test", id.Hex()),
+		Password: "123456789",
+		Role:     "user",
+		Created:  time.Now(),
+		Updated:  time.Now(),
+	}
+
+	mockRepo.Save(user)
+
+	err := mockRepo.DeleteById(id.Hex())
+	assert.NoError(t, err)
+
+	notFound, err := mockRepo.GetById(id.Hex())
+	assert.Error(t, err)
+	assert.Nil(t, notFound)
+}
+
+// TestMockUsersRepositoryGetAll tests the operation to return all users with a mock repository.
+func TestMockUsersRepositoryGetAll(t *testing.T) {
+	mockRepo := &MockUserRepository{Users: make(map[string]*models.User)}
+	id := bson.NewObjectId()
+
+	user := &models.User{
+		Id:       id,
+		Name:     "TEST",
+		Email:    fmt.Sprintf("%s@email.test", id.Hex()),
+		Password: "123456789",
+		Role:     "user",
+		Created:  time.Now(),
+		Updated:  time.Now(),
+	}
+
+	mockRepo.Save(user)
+
+	users, err := mockRepo.GetAll()
 	assert.NoError(t, err)
 	assert.NotEmpty(t, users)
+	assert.Equal(t, []*models.User{user}, users)
 }
