@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/mtnmunuklu/bavul/api/util"
@@ -76,6 +78,14 @@ func (h *vulnHandlers) GetAllCVEs(c *fiber.Ctx) error {
 		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
 	}
 
+	// Cache key creation
+	cacheKey := "GetAllCVEs"
+
+	// Get value from cache
+	if cachedData, found := util.GetFromCache(cacheKey); found {
+		return util.WriteAsJSON(c, http.StatusOK, cachedData)
+	}
+
 	stream, err := h.vulnSvcClient.GetAllCVEs(c.Context(), &pb.GetAllCVEsRequest{})
 	if err != nil {
 		return util.WriteError(c, http.StatusUnprocessableEntity, err)
@@ -94,6 +104,9 @@ func (h *vulnHandlers) GetAllCVEs(c *fiber.Ctx) error {
 
 		getedCVEs = append(getedCVEs, user)
 	}
+
+	// Add the obtained data to the cache
+	util.SetToCache(cacheKey, getedCVEs, 5*time.Minute)
 
 	return util.WriteAsJSON(c, http.StatusOK, getedCVEs)
 }
@@ -170,10 +183,17 @@ func (h *vulnHandlers) FetchNVDFeeds(c *fiber.Ctx) error {
 		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
 	}
 
-	apiKey := c.Get("ApiKey")
-	fetchNVDFeedsRequest := &pb.FetchNVDFeedsRequest{ApiKey: apiKey}
+	apiKey := c.Query("ApiKey")
 
-	stream, err := h.vulnSvcClient.FetchNVDFeeds(c.Context(), fetchNVDFeedsRequest)
+	// Cache key creation
+	cacheKey := "FetchNVDFeeds:" + apiKey
+
+	// Get value from cache
+	if cachedData, found := util.GetFromCache(cacheKey); found {
+		return util.WriteAsJSON(c, http.StatusOK, cachedData)
+	}
+
+	stream, err := h.vulnSvcClient.FetchNVDFeeds(c.Context(), &pb.FetchNVDFeedsRequest{ApiKey: apiKey})
 	if err != nil {
 		return util.WriteError(c, http.StatusUnprocessableEntity, err)
 	}
@@ -192,19 +212,31 @@ func (h *vulnHandlers) FetchNVDFeeds(c *fiber.Ctx) error {
 		fetchedNVDFeeds = append(fetchedNVDFeeds, fetchedNVDFeed)
 	}
 
+	// Add the obtained data to the cache
+	util.SetToCache(cacheKey, fetchedNVDFeeds, 5*time.Minute)
+
 	return util.WriteAsJSON(c, http.StatusOK, fetchedNVDFeeds)
 }
 
 func (h *vulnHandlers) SearchCVE(c *fiber.Ctx) error {
+	// Cache key creation
+	cacheKey := fmt.Sprintf("SearchCVE:%s:%s:%s:%s:%s:%s",
+		c.Query("CveId"), c.Query("Severity"), c.Query("Product"),
+		c.Query("Vendor"), c.Query("StartDate"), c.Query("EndDate"))
 
-	cveId := c.Get("CveId")
-	severity := c.Get("Severity")
-	product := c.Get("Product")
-	vendor := c.Get("Vendor")
-	startDate := c.Get("StartDate")
-	endDate := c.Get("EndDate")
+	// Get value from cache
+	if cachedData, found := util.GetFromCache(cacheKey); found {
+		return util.WriteAsJSON(c, http.StatusOK, cachedData)
+	}
 
-	searchCVEsRequest := &pb.SearchCVERequest{CveId: cveId, Severity: severity, Product: product, Vendor: vendor, StartDate: startDate, EndDate: endDate}
+	searchCVEsRequest := &pb.SearchCVERequest{
+		CveId:     c.Query("CveId"),
+		Severity:  c.Query("Severity"),
+		Product:   c.Query("Product"),
+		Vendor:    c.Query("Vendor"),
+		StartDate: c.Query("StartDate"),
+		EndDate:   c.Query("EndDate"),
+	}
 
 	stream, err := h.vulnSvcClient.SearchCVE(c.Context(), searchCVEsRequest)
 	if err != nil {
@@ -224,6 +256,9 @@ func (h *vulnHandlers) SearchCVE(c *fiber.Ctx) error {
 
 		searchedCVEs = append(searchedCVEs, searchedCVE)
 	}
+
+	// Add the obtained data to the cache
+	util.SetToCache(cacheKey, searchedCVEs, 5*time.Minute)
 
 	return util.WriteAsJSON(c, http.StatusOK, searchedCVEs)
 }

@@ -3,6 +3,7 @@ package handlers
 import (
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/mtnmunuklu/bavul/api/util"
@@ -79,13 +80,24 @@ func (h *authHandlers) GetUser(c *fiber.Ctx) error {
 		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
 	}
 
-	email := c.Get("Email")
+	// Cache key creation
+	cacheKey := "GetUser:" + c.Query("Email")
+
+	// Get value from cache
+	if cachedData, found := util.GetFromCache(cacheKey); found {
+		return util.WriteAsJSON(c, http.StatusOK, cachedData)
+	}
+
+	email := c.Query("Email")
 	getUserRequest := &pb.GetUserRequest{Email: email}
 
 	getedUser, err := h.authSvcClient.GetUser(c.Context(), getUserRequest)
 	if err != nil {
 		return util.WriteError(c, http.StatusUnprocessableEntity, err)
 	}
+
+	// Add the obtained data to the cache
+	util.SetToCache(cacheKey, getedUser, 5*time.Minute)
 
 	return util.WriteAsJSON(c, http.StatusOK, getedUser)
 }
@@ -107,7 +119,7 @@ func (h *authHandlers) DeleteUser(c *fiber.Ctx) error {
 		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
 	}
 
-	email := c.Get("Email")
+	email := c.Query("Email")
 	deleteUserRequest := &pb.DeleteUserRequest{Email: email}
 
 	deletedUser, err := h.authSvcClient.DeleteUser(c.Context(), deleteUserRequest)
@@ -210,6 +222,14 @@ func (h *authHandlers) ListUsers(c *fiber.Ctx) error {
 		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
 	}
 
+	// Cache key creation
+	cacheKey := "ListUsers"
+
+	// Get value from cache
+	if cachedData, found := util.GetFromCache(cacheKey); found {
+		return util.WriteAsJSON(c, http.StatusOK, cachedData)
+	}
+
 	stream, err := h.authSvcClient.ListUsers(c.Context(), &pb.ListUsersRequest{})
 	if err != nil {
 		return util.WriteError(c, http.StatusUnprocessableEntity, err)
@@ -228,6 +248,9 @@ func (h *authHandlers) ListUsers(c *fiber.Ctx) error {
 
 		getedUsers = append(getedUsers, user)
 	}
+
+	// Add the obtained data to the cache
+	util.SetToCache(cacheKey, getedUsers, 5*time.Minute)
 
 	return util.WriteAsJSON(c, http.StatusOK, getedUsers)
 }

@@ -2,9 +2,11 @@ package util
 
 import (
 	"errors"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/mtnmunuklu/bavul/security"
+	"github.com/mtnmunuklu/bicache"
 )
 
 // Contains error codes for API.
@@ -53,4 +55,15 @@ func GetUserIDFromToken(c *fiber.Ctx) (string, error) {
 // CheckUserIsAdmin checks if the user is an admin.
 func CheckUserIsAdmin(role string) bool {
 	return role == "admin"
+}
+
+// Create a BiCache instance
+var myCache = bicache.NewBiCache(1000, 10*time.Minute)
+
+func GetFromCache(key string) (interface{}, bool) {
+	return myCache.Get(key)
+}
+
+func SetToCache(key string, value interface{}, expiration time.Duration) {
+	myCache.Set(key, value, expiration)
 }
