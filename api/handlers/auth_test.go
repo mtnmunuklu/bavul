@@ -9,7 +9,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/mtnmunuklu/bavul/api/handlers"
-	"github.com/mtnmunuklu/bavul/authentication/util"
+	"github.com/mtnmunuklu/bavul/api/util"
+	authUtil "github.com/mtnmunuklu/bavul/authentication/util"
 	"github.com/mtnmunuklu/bavul/pb"
 	"github.com/mtnmunuklu/bavul/security"
 	"github.com/stretchr/testify/assert"
@@ -237,7 +238,7 @@ func TestSignIn(t *testing.T) {
 		user := &pb.User{Id: "1", Name: "Test User1", Email: req.GetEmail(), Role: "user", Created: "2024-02-02T18:18:00", Updated: "2024-02-02T18:18:00"}
 		token, err := security.NewToken(user.Id)
 		if err != nil {
-			return nil, util.ErrFailedSignIn
+			return nil, authUtil.ErrFailedSignIn
 		}
 		return &pb.SignInResponse{User: user, Token: token}, nil
 	}
@@ -298,13 +299,32 @@ func TestGetUser(t *testing.T) {
 	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
 	fiberContext.Request().Header.Set("Email", "testemail1@test.com.tr")
 
-	// Test the GetUser handler
+	// Test the GetUser handler for the first time
 	err = handler.GetUser(fiberContext)
 	assert.NoError(t, err)
 
 	// Assert that the GetUserRole and GetUser functions were called with the expected parameters
 	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockWrapper should be called")
 	assert.True(t, mockAuthWrapper.GetUserFuncCalled, "GetUser function of mockWrapper should be called")
+
+	// Get the cached result for the first time
+	cachedDataFirstTime, foundFirstTime := util.GetFromCache("GetUser:testemail1@test.com.tr")
+	assert.True(t, foundFirstTime, "Result should be in cache for the first time")
+
+	// Test the GetUser handler for the second time
+	err = handler.GetUser(fiberContext)
+	assert.NoError(t, err)
+
+	// Assert that the GetUserRole and GetUser functions were called again (second time) with the expected parameters
+	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockWrapper should be called again (second time)")
+	assert.True(t, mockAuthWrapper.GetUserFuncCalled, "GetUser function of mockWrapper should be called again (second time)")
+
+	// Get the cached result for the second time
+	cachedDataSecondTime, foundSecondTime := util.GetFromCache("GetUser:testemail1@test.com.tr")
+	assert.True(t, foundSecondTime, "Result should be in cache for the second time")
+
+	// Assert that the cached results for the first and second times are the same
+	assert.Equal(t, cachedDataFirstTime, cachedDataSecondTime, "Cached results for the first and second times should be the same")
 
 	// Release the Fiber context
 	app.ReleaseCtx(fiberContext)
@@ -563,13 +583,32 @@ func TestListUsers(t *testing.T) {
 	assert.NoError(t, err)
 	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
 
-	// Test the ListUsers handler
+	// Test the ListUsers handler for the first time
 	err = handler.ListUsers(fiberContext)
 	assert.NoError(t, err)
 
 	// Assert that the GetUserRole and ListUsers functions were called with the expected parameters
 	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockWrapper should be called")
 	assert.True(t, mockAuthWrapper.ListUsersFuncCalled, "ListUsers function of mockWrapper should be called")
+
+	// Get the cached result for the first time
+	cachedDataFirstTime, foundFirstTime := util.GetFromCache("ListUsers")
+	assert.True(t, foundFirstTime, "Result should be in cache for the first time")
+
+	// Test the ListUsers handler for the second time
+	err = handler.ListUsers(fiberContext)
+	assert.NoError(t, err)
+
+	// Assert that the GetUserRole and ListUsers functions were called again (second time) with the expected parameters
+	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockWrapper should be called again (second time)")
+	assert.True(t, mockAuthWrapper.ListUsersFuncCalled, "ListUsers function of mockWrapper should be called again (second time)")
+
+	// Get the cached result for the second time
+	cachedDataSecondTime, foundSecondTime := util.GetFromCache("ListUsers")
+	assert.True(t, foundSecondTime, "Result should be in cache for the second time")
+
+	// Assert that the cached results for the first and second times are the same
+	assert.Equal(t, cachedDataFirstTime, cachedDataSecondTime, "Cached results for the first and second times should be the same")
 
 	// Release the Fiber context
 	app.ReleaseCtx(fiberContext)

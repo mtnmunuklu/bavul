@@ -183,7 +183,7 @@ func (h *vulnHandlers) FetchNVDFeeds(c *fiber.Ctx) error {
 		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
 	}
 
-	apiKey := c.Query("ApiKey")
+	apiKey := c.Get("ApiKey")
 
 	// Cache key creation
 	cacheKey := "FetchNVDFeeds:" + apiKey
@@ -221,8 +221,8 @@ func (h *vulnHandlers) FetchNVDFeeds(c *fiber.Ctx) error {
 func (h *vulnHandlers) SearchCVE(c *fiber.Ctx) error {
 	// Cache key creation
 	cacheKey := fmt.Sprintf("SearchCVE:%s:%s:%s:%s:%s:%s",
-		c.Query("CveId"), c.Query("Severity"), c.Query("Product"),
-		c.Query("Vendor"), c.Query("StartDate"), c.Query("EndDate"))
+		c.Get("CveId"), c.Get("Severity"), c.Get("Product"),
+		c.Get("Vendor"), c.Get("StartDate"), c.Get("EndDate"))
 
 	// Get value from cache
 	if cachedData, found := util.GetFromCache(cacheKey); found {
@@ -230,12 +230,12 @@ func (h *vulnHandlers) SearchCVE(c *fiber.Ctx) error {
 	}
 
 	searchCVEsRequest := &pb.SearchCVERequest{
-		CveId:     c.Query("CveId"),
-		Severity:  c.Query("Severity"),
-		Product:   c.Query("Product"),
-		Vendor:    c.Query("Vendor"),
-		StartDate: c.Query("StartDate"),
-		EndDate:   c.Query("EndDate"),
+		CveId:     c.Get("CveId"),
+		Severity:  c.Get("Severity"),
+		Product:   c.Get("Product"),
+		Vendor:    c.Get("Vendor"),
+		StartDate: c.Get("StartDate"),
+		EndDate:   c.Get("EndDate"),
 	}
 
 	stream, err := h.vulnSvcClient.SearchCVE(c.Context(), searchCVEsRequest)

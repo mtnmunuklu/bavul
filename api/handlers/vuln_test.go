@@ -9,6 +9,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/mtnmunuklu/bavul/api/handlers"
+	"github.com/mtnmunuklu/bavul/api/util"
 	"github.com/mtnmunuklu/bavul/pb"
 	"github.com/mtnmunuklu/bavul/security"
 	"github.com/stretchr/testify/assert"
@@ -245,13 +246,32 @@ func TestGetAllCVEs(t *testing.T) {
 	assert.NoError(t, err)
 	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
 
-	// Test the GetAllCVEs handler
+	// Test the GetAllCVEs handler for the first time
 	err = handler.GetAllCVEs(fiberContext)
 	assert.NoError(t, err)
 
 	// Assert that the GetUserRole and GetAllCVEs functions were called with the expected parameters
 	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockAuthWrapper should be called")
 	assert.True(t, mockVulnWrapper.GetAllCVEsFuncCalled, "GetAllCVEs function of mockVulnWrapper should be called")
+
+	// Get the cached result for the first time
+	cachedDataFirstTime, foundFirstTime := util.GetFromCache("GetAllCVEs")
+	assert.True(t, foundFirstTime, "Result should be in cache for the first time")
+
+	// Test the GetAllCVEs handler for the second time
+	err = handler.GetAllCVEs(fiberContext)
+	assert.NoError(t, err)
+
+	// Assert that the GetUserRole and GetAllCVEs functions were called again (second time) with the expected parameters
+	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockAuthWrapper should be called again (second time)")
+	assert.True(t, mockVulnWrapper.GetAllCVEsFuncCalled, "GetAllCVEs function of mockVulnWrapper should be called again (second time)")
+
+	// Get the cached result for the second time
+	cachedDataSecondTime, foundSecondTime := util.GetFromCache("GetAllCVEs")
+	assert.True(t, foundSecondTime, "Result should be in cache for the second time")
+
+	// Assert that the cached results for the first and second times are the same
+	assert.Equal(t, cachedDataFirstTime, cachedDataSecondTime, "Cached results for the first and second times should be the same")
 
 	// Release the Fiber context
 	app.ReleaseCtx(fiberContext)
@@ -362,7 +382,6 @@ func TestUpdateCVE(t *testing.T) {
 }
 
 func TestFetchNVDFeeds(t *testing.T) {
-
 	// Create a custom mock client wrapper for Auth Service
 	mockAuthWrapper := &MockAuthServiceClientWrapper{}
 
@@ -402,9 +421,9 @@ func TestFetchNVDFeeds(t *testing.T) {
 	token, err := security.NewToken(userId.Hex())
 	assert.NoError(t, err)
 	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
-	fiberContext.Request().Header.Set("CveId", "123")
+	fiberContext.Request().Header.Set("ApiKey", "test-api-key")
 
-	// Test the FetchNVDFeeds handler
+	// Test the FetchNVDFeeds handler for the first time
 	err = handler.FetchNVDFeeds(fiberContext)
 	assert.NoError(t, err)
 
@@ -412,13 +431,30 @@ func TestFetchNVDFeeds(t *testing.T) {
 	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockWrapper should be called")
 	assert.True(t, mockVulnWrapper.FetchNVDFeedsFuncCalled, "FetchNVDFeeds function of mockWrapper should be called")
 
+	// Get the cached result for the first time
+	cachedDataFirstTime, foundFirstTime := util.GetFromCache("FetchNVDFeeds:test-api-key")
+	assert.True(t, foundFirstTime, "Result should be in cache for the first time")
+
+	// Test the FetchNVDFeeds handler for the second time
+	err = handler.FetchNVDFeeds(fiberContext)
+	assert.NoError(t, err)
+
+	// Assert that the GetUserRole and FetchNVDFeeds functions were called again (second time) with the expected parameters
+	assert.True(t, mockAuthWrapper.GetUserRoleFuncCalled, "GetUserRole function of mockWrapper should be called again (second time)")
+	assert.True(t, mockVulnWrapper.FetchNVDFeedsFuncCalled, "FetchNVDFeeds function of mockWrapper should be called again (second time)")
+
+	// Get the cached result for the second time
+	cachedDataSecondTime, foundSecondTime := util.GetFromCache("FetchNVDFeeds:test-api-key")
+	assert.True(t, foundSecondTime, "Result should be in cache for the second time")
+
+	// Assert that the cached results for the first and second times are the same
+	assert.Equal(t, cachedDataFirstTime, cachedDataSecondTime, "Cached results for the first and second times should be the same")
+
 	// Release the Fiber context
 	app.ReleaseCtx(fiberContext)
-
 }
 
 func TestSearchCVE(t *testing.T) {
-
 	// Create a custom mock client wrapper for Auth Service
 	mockAuthWrapper := &MockAuthServiceClientWrapper{}
 
@@ -453,13 +489,33 @@ func TestSearchCVE(t *testing.T) {
 	assert.NoError(t, err)
 	fiberContext.Request().Header.Set("Authorization", "Bearer "+token+"")
 	fiberContext.Request().Header.Set("Severity", "High")
+	fiberContext.Request().Header.Set("Product", "Test Product 1")
+	fiberContext.Request().Header.Set("Vendor", "Test Vendor 1")
 
-	// Test the SearchCVE handler
+	// Test the SearchCVE handler for the first time
 	err = handler.SearchCVE(fiberContext)
 	assert.NoError(t, err)
 
-	// Assert that the SearchCVE functions were called with the expected parameters
+	// Assert that the SearchCVE function was called with the expected parameters
 	assert.True(t, mockVulnWrapper.SearchCVEFuncCalled, "SearchCVE function of mockWrapper should be called")
+
+	// Get the cached result for the first time
+	cachedDataFirstTime, foundFirstTime := util.GetFromCache("SearchCVE::High:Test Product 1:Test Vendor 1::")
+	assert.True(t, foundFirstTime, "Result should be in cache for the first time")
+
+	// Test the SearchCVE handler for the second time
+	err = handler.SearchCVE(fiberContext)
+	assert.NoError(t, err)
+
+	// Assert that the SearchCVE function was called again (second time) with the expected parameters
+	assert.True(t, mockVulnWrapper.SearchCVEFuncCalled, "SearchCVE function of mockWrapper should be called again (second time)")
+
+	// Get the cached result for the second time
+	cachedDataSecondTime, foundSecondTime := util.GetFromCache("SearchCVE::High:Test Product 1:Test Vendor 1::")
+	assert.True(t, foundSecondTime, "Result should be in cache for the second time")
+
+	// Assert that the cached results for the first and second times are the same
+	assert.Equal(t, cachedDataFirstTime, cachedDataSecondTime, "Cached results for the first and second times should be the same")
 
 	// Release the Fiber context
 	app.ReleaseCtx(fiberContext)

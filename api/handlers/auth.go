@@ -81,14 +81,14 @@ func (h *authHandlers) GetUser(c *fiber.Ctx) error {
 	}
 
 	// Cache key creation
-	cacheKey := "GetUser:" + c.Query("Email")
+	cacheKey := "GetUser:" + c.Get("Email")
 
 	// Get value from cache
 	if cachedData, found := util.GetFromCache(cacheKey); found {
 		return util.WriteAsJSON(c, http.StatusOK, cachedData)
 	}
 
-	email := c.Query("Email")
+	email := c.Get("Email")
 	getUserRequest := &pb.GetUserRequest{Email: email}
 
 	getedUser, err := h.authSvcClient.GetUser(c.Context(), getUserRequest)
@@ -119,7 +119,7 @@ func (h *authHandlers) DeleteUser(c *fiber.Ctx) error {
 		return util.WriteError(c, http.StatusUnauthorized, util.ErrUnauthorized)
 	}
 
-	email := c.Query("Email")
+	email := c.Get("Email")
 	deleteUserRequest := &pb.DeleteUserRequest{Email: email}
 
 	deletedUser, err := h.authSvcClient.DeleteUser(c.Context(), deleteUserRequest)
