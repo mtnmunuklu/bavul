@@ -8,7 +8,6 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
 	"math/big"
 	"os"
 	"time"
@@ -189,7 +188,7 @@ func savePrivateKey(filename string, key *ecdsa.PrivateKey) {
 	}
 
 	pemBlock := &pem.Block{Type: "EC PRIVATE KEY", Bytes: keyBytes}
-	err = ioutil.WriteFile(filename, pem.EncodeToMemory(pemBlock), 0644)
+	err = os.WriteFile(filename, pem.EncodeToMemory(pemBlock), 0644)
 	if err != nil {
 		fmt.Printf("Error writing private key to file: %v\n", err)
 	}
@@ -197,7 +196,7 @@ func savePrivateKey(filename string, key *ecdsa.PrivateKey) {
 
 func saveCertificateRequest(filename string, req []byte) {
 	pemBlock := &pem.Block{Type: "CERTIFICATE REQUEST", Bytes: req}
-	err := ioutil.WriteFile(filename, pem.EncodeToMemory(pemBlock), 0644)
+	err := os.WriteFile(filename, pem.EncodeToMemory(pemBlock), 0644)
 	if err != nil {
 		fmt.Printf("Error writing certificate request to file: %v\n", err)
 	}
@@ -205,7 +204,7 @@ func saveCertificateRequest(filename string, req []byte) {
 
 func saveCertificate(filename string, cert []byte) {
 	pemBlock := &pem.Block{Type: "CERTIFICATE", Bytes: cert}
-	err := ioutil.WriteFile(filename, pem.EncodeToMemory(pemBlock), 0644)
+	err := os.WriteFile(filename, pem.EncodeToMemory(pemBlock), 0644)
 	if err != nil {
 		fmt.Printf("Error writing certificate to file: %v\n", err)
 	}
