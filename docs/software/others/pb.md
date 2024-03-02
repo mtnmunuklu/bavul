@@ -10,11 +10,41 @@ import "github.com/mtnmunuklu/bavul/pb"
 
 - [Variables](<#variables>)
 - [func RegisterAuthServiceServer\(s grpc.ServiceRegistrar, srv AuthServiceServer\)](<#RegisterAuthServiceServer>)
+- [func RegisterVulnServiceServer\(s grpc.ServiceRegistrar, srv VulnServiceServer\)](<#RegisterVulnServiceServer>)
+- [type AddCVERequest](<#AddCVERequest>)
+  - [func \(\*AddCVERequest\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#AddCVERequest.Descriptor>)
+  - [func \(x \*AddCVERequest\) GetCveId\(\) string](<#AddCVERequest.GetCveId>)
+  - [func \(x \*AddCVERequest\) GetDescription\(\) string](<#AddCVERequest.GetDescription>)
+  - [func \(x \*AddCVERequest\) GetLinks\(\) \[\]string](<#AddCVERequest.GetLinks>)
+  - [func \(x \*AddCVERequest\) GetModified\(\) string](<#AddCVERequest.GetModified>)
+  - [func \(x \*AddCVERequest\) GetProduct\(\) string](<#AddCVERequest.GetProduct>)
+  - [func \(x \*AddCVERequest\) GetPublished\(\) string](<#AddCVERequest.GetPublished>)
+  - [func \(x \*AddCVERequest\) GetSeverity\(\) string](<#AddCVERequest.GetSeverity>)
+  - [func \(x \*AddCVERequest\) GetVendor\(\) string](<#AddCVERequest.GetVendor>)
+  - [func \(\*AddCVERequest\) ProtoMessage\(\)](<#AddCVERequest.ProtoMessage>)
+  - [func \(x \*AddCVERequest\) ProtoReflect\(\) protoreflect.Message](<#AddCVERequest.ProtoReflect>)
+  - [func \(x \*AddCVERequest\) Reset\(\)](<#AddCVERequest.Reset>)
+  - [func \(x \*AddCVERequest\) String\(\) string](<#AddCVERequest.String>)
 - [type AuthServiceClient](<#AuthServiceClient>)
   - [func NewAuthServiceClient\(cc grpc.ClientConnInterface\) AuthServiceClient](<#NewAuthServiceClient>)
 - [type AuthServiceServer](<#AuthServiceServer>)
 - [type AuthService\_ListUsersClient](<#AuthService_ListUsersClient>)
 - [type AuthService\_ListUsersServer](<#AuthService_ListUsersServer>)
+- [type CVE](<#CVE>)
+  - [func \(\*CVE\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#CVE.Descriptor>)
+  - [func \(x \*CVE\) GetCveId\(\) string](<#CVE.GetCveId>)
+  - [func \(x \*CVE\) GetDescription\(\) string](<#CVE.GetDescription>)
+  - [func \(x \*CVE\) GetId\(\) string](<#CVE.GetId>)
+  - [func \(x \*CVE\) GetLinks\(\) \[\]string](<#CVE.GetLinks>)
+  - [func \(x \*CVE\) GetModified\(\) string](<#CVE.GetModified>)
+  - [func \(x \*CVE\) GetProduct\(\) string](<#CVE.GetProduct>)
+  - [func \(x \*CVE\) GetPublished\(\) string](<#CVE.GetPublished>)
+  - [func \(x \*CVE\) GetSeverity\(\) string](<#CVE.GetSeverity>)
+  - [func \(x \*CVE\) GetVendor\(\) string](<#CVE.GetVendor>)
+  - [func \(\*CVE\) ProtoMessage\(\)](<#CVE.ProtoMessage>)
+  - [func \(x \*CVE\) ProtoReflect\(\) protoreflect.Message](<#CVE.ProtoReflect>)
+  - [func \(x \*CVE\) Reset\(\)](<#CVE.Reset>)
+  - [func \(x \*CVE\) String\(\) string](<#CVE.String>)
 - [type ChangeUserRoleRequest](<#ChangeUserRoleRequest>)
   - [func \(\*ChangeUserRoleRequest\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#ChangeUserRoleRequest.Descriptor>)
   - [func \(x \*ChangeUserRoleRequest\) GetEmail\(\) string](<#ChangeUserRoleRequest.GetEmail>)
@@ -23,6 +53,20 @@ import "github.com/mtnmunuklu/bavul/pb"
   - [func \(x \*ChangeUserRoleRequest\) ProtoReflect\(\) protoreflect.Message](<#ChangeUserRoleRequest.ProtoReflect>)
   - [func \(x \*ChangeUserRoleRequest\) Reset\(\)](<#ChangeUserRoleRequest.Reset>)
   - [func \(x \*ChangeUserRoleRequest\) String\(\) string](<#ChangeUserRoleRequest.String>)
+- [type DeleteCVERequest](<#DeleteCVERequest>)
+  - [func \(\*DeleteCVERequest\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#DeleteCVERequest.Descriptor>)
+  - [func \(x \*DeleteCVERequest\) GetCveId\(\) string](<#DeleteCVERequest.GetCveId>)
+  - [func \(\*DeleteCVERequest\) ProtoMessage\(\)](<#DeleteCVERequest.ProtoMessage>)
+  - [func \(x \*DeleteCVERequest\) ProtoReflect\(\) protoreflect.Message](<#DeleteCVERequest.ProtoReflect>)
+  - [func \(x \*DeleteCVERequest\) Reset\(\)](<#DeleteCVERequest.Reset>)
+  - [func \(x \*DeleteCVERequest\) String\(\) string](<#DeleteCVERequest.String>)
+- [type DeleteCVEResponse](<#DeleteCVEResponse>)
+  - [func \(\*DeleteCVEResponse\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#DeleteCVEResponse.Descriptor>)
+  - [func \(x \*DeleteCVEResponse\) GetCveId\(\) string](<#DeleteCVEResponse.GetCveId>)
+  - [func \(\*DeleteCVEResponse\) ProtoMessage\(\)](<#DeleteCVEResponse.ProtoMessage>)
+  - [func \(x \*DeleteCVEResponse\) ProtoReflect\(\) protoreflect.Message](<#DeleteCVEResponse.ProtoReflect>)
+  - [func \(x \*DeleteCVEResponse\) Reset\(\)](<#DeleteCVEResponse.Reset>)
+  - [func \(x \*DeleteCVEResponse\) String\(\) string](<#DeleteCVEResponse.String>)
 - [type DeleteUserRequest](<#DeleteUserRequest>)
   - [func \(\*DeleteUserRequest\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#DeleteUserRequest.Descriptor>)
   - [func \(x \*DeleteUserRequest\) GetEmail\(\) string](<#DeleteUserRequest.GetEmail>)
@@ -37,6 +81,19 @@ import "github.com/mtnmunuklu/bavul/pb"
   - [func \(x \*DeleteUserResponse\) ProtoReflect\(\) protoreflect.Message](<#DeleteUserResponse.ProtoReflect>)
   - [func \(x \*DeleteUserResponse\) Reset\(\)](<#DeleteUserResponse.Reset>)
   - [func \(x \*DeleteUserResponse\) String\(\) string](<#DeleteUserResponse.String>)
+- [type FetchNVDFeedsRequest](<#FetchNVDFeedsRequest>)
+  - [func \(\*FetchNVDFeedsRequest\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#FetchNVDFeedsRequest.Descriptor>)
+  - [func \(x \*FetchNVDFeedsRequest\) GetApiKey\(\) string](<#FetchNVDFeedsRequest.GetApiKey>)
+  - [func \(\*FetchNVDFeedsRequest\) ProtoMessage\(\)](<#FetchNVDFeedsRequest.ProtoMessage>)
+  - [func \(x \*FetchNVDFeedsRequest\) ProtoReflect\(\) protoreflect.Message](<#FetchNVDFeedsRequest.ProtoReflect>)
+  - [func \(x \*FetchNVDFeedsRequest\) Reset\(\)](<#FetchNVDFeedsRequest.Reset>)
+  - [func \(x \*FetchNVDFeedsRequest\) String\(\) string](<#FetchNVDFeedsRequest.String>)
+- [type GetAllCVEsRequest](<#GetAllCVEsRequest>)
+  - [func \(\*GetAllCVEsRequest\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#GetAllCVEsRequest.Descriptor>)
+  - [func \(\*GetAllCVEsRequest\) ProtoMessage\(\)](<#GetAllCVEsRequest.ProtoMessage>)
+  - [func \(x \*GetAllCVEsRequest\) ProtoReflect\(\) protoreflect.Message](<#GetAllCVEsRequest.ProtoReflect>)
+  - [func \(x \*GetAllCVEsRequest\) Reset\(\)](<#GetAllCVEsRequest.Reset>)
+  - [func \(x \*GetAllCVEsRequest\) String\(\) string](<#GetAllCVEsRequest.String>)
 - [type GetUserRequest](<#GetUserRequest>)
   - [func \(\*GetUserRequest\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#GetUserRequest.Descriptor>)
   - [func \(x \*GetUserRequest\) GetEmail\(\) string](<#GetUserRequest.GetEmail>)
@@ -64,6 +121,18 @@ import "github.com/mtnmunuklu/bavul/pb"
   - [func \(x \*ListUsersRequest\) ProtoReflect\(\) protoreflect.Message](<#ListUsersRequest.ProtoReflect>)
   - [func \(x \*ListUsersRequest\) Reset\(\)](<#ListUsersRequest.Reset>)
   - [func \(x \*ListUsersRequest\) String\(\) string](<#ListUsersRequest.String>)
+- [type SearchCVERequest](<#SearchCVERequest>)
+  - [func \(\*SearchCVERequest\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#SearchCVERequest.Descriptor>)
+  - [func \(x \*SearchCVERequest\) GetCveId\(\) string](<#SearchCVERequest.GetCveId>)
+  - [func \(x \*SearchCVERequest\) GetEndDate\(\) string](<#SearchCVERequest.GetEndDate>)
+  - [func \(x \*SearchCVERequest\) GetProduct\(\) string](<#SearchCVERequest.GetProduct>)
+  - [func \(x \*SearchCVERequest\) GetSeverity\(\) string](<#SearchCVERequest.GetSeverity>)
+  - [func \(x \*SearchCVERequest\) GetStartDate\(\) string](<#SearchCVERequest.GetStartDate>)
+  - [func \(x \*SearchCVERequest\) GetVendor\(\) string](<#SearchCVERequest.GetVendor>)
+  - [func \(\*SearchCVERequest\) ProtoMessage\(\)](<#SearchCVERequest.ProtoMessage>)
+  - [func \(x \*SearchCVERequest\) ProtoReflect\(\) protoreflect.Message](<#SearchCVERequest.ProtoReflect>)
+  - [func \(x \*SearchCVERequest\) Reset\(\)](<#SearchCVERequest.Reset>)
+  - [func \(x \*SearchCVERequest\) String\(\) string](<#SearchCVERequest.String>)
 - [type SignInRequest](<#SignInRequest>)
   - [func \(\*SignInRequest\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#SignInRequest.Descriptor>)
   - [func \(x \*SignInRequest\) GetEmail\(\) string](<#SignInRequest.GetEmail>)
@@ -100,7 +169,29 @@ import "github.com/mtnmunuklu/bavul/pb"
   - [func \(UnimplementedAuthServiceServer\) UpdateUserEmail\(context.Context, \*UpdateUserEmailRequest\) \(\*User, error\)](<#UnimplementedAuthServiceServer.UpdateUserEmail>)
   - [func \(UnimplementedAuthServiceServer\) UpdateUserName\(context.Context, \*UpdateUserNameRequest\) \(\*User, error\)](<#UnimplementedAuthServiceServer.UpdateUserName>)
   - [func \(UnimplementedAuthServiceServer\) UpdateUserPassword\(context.Context, \*UpdateUserPasswordRequest\) \(\*User, error\)](<#UnimplementedAuthServiceServer.UpdateUserPassword>)
+- [type UnimplementedVulnServiceServer](<#UnimplementedVulnServiceServer>)
+  - [func \(UnimplementedVulnServiceServer\) AddCVE\(context.Context, \*AddCVERequest\) \(\*CVE, error\)](<#UnimplementedVulnServiceServer.AddCVE>)
+  - [func \(UnimplementedVulnServiceServer\) DeleteCVE\(context.Context, \*DeleteCVERequest\) \(\*DeleteCVEResponse, error\)](<#UnimplementedVulnServiceServer.DeleteCVE>)
+  - [func \(UnimplementedVulnServiceServer\) FetchNVDFeeds\(\*FetchNVDFeedsRequest, VulnService\_FetchNVDFeedsServer\) error](<#UnimplementedVulnServiceServer.FetchNVDFeeds>)
+  - [func \(UnimplementedVulnServiceServer\) GetAllCVEs\(\*GetAllCVEsRequest, VulnService\_GetAllCVEsServer\) error](<#UnimplementedVulnServiceServer.GetAllCVEs>)
+  - [func \(UnimplementedVulnServiceServer\) SearchCVE\(\*SearchCVERequest, VulnService\_SearchCVEServer\) error](<#UnimplementedVulnServiceServer.SearchCVE>)
+  - [func \(UnimplementedVulnServiceServer\) UpdateCVE\(context.Context, \*UpdateCVERequest\) \(\*CVE, error\)](<#UnimplementedVulnServiceServer.UpdateCVE>)
 - [type UnsafeAuthServiceServer](<#UnsafeAuthServiceServer>)
+- [type UnsafeVulnServiceServer](<#UnsafeVulnServiceServer>)
+- [type UpdateCVERequest](<#UpdateCVERequest>)
+  - [func \(\*UpdateCVERequest\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#UpdateCVERequest.Descriptor>)
+  - [func \(x \*UpdateCVERequest\) GetCveId\(\) string](<#UpdateCVERequest.GetCveId>)
+  - [func \(x \*UpdateCVERequest\) GetDescription\(\) string](<#UpdateCVERequest.GetDescription>)
+  - [func \(x \*UpdateCVERequest\) GetLinks\(\) \[\]string](<#UpdateCVERequest.GetLinks>)
+  - [func \(x \*UpdateCVERequest\) GetModified\(\) string](<#UpdateCVERequest.GetModified>)
+  - [func \(x \*UpdateCVERequest\) GetProduct\(\) string](<#UpdateCVERequest.GetProduct>)
+  - [func \(x \*UpdateCVERequest\) GetPublished\(\) string](<#UpdateCVERequest.GetPublished>)
+  - [func \(x \*UpdateCVERequest\) GetSeverity\(\) string](<#UpdateCVERequest.GetSeverity>)
+  - [func \(x \*UpdateCVERequest\) GetVendor\(\) string](<#UpdateCVERequest.GetVendor>)
+  - [func \(\*UpdateCVERequest\) ProtoMessage\(\)](<#UpdateCVERequest.ProtoMessage>)
+  - [func \(x \*UpdateCVERequest\) ProtoReflect\(\) protoreflect.Message](<#UpdateCVERequest.ProtoReflect>)
+  - [func \(x \*UpdateCVERequest\) Reset\(\)](<#UpdateCVERequest.Reset>)
+  - [func \(x \*UpdateCVERequest\) String\(\) string](<#UpdateCVERequest.String>)
 - [type UpdateUserEmailRequest](<#UpdateUserEmailRequest>)
   - [func \(\*UpdateUserEmailRequest\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#UpdateUserEmailRequest.Descriptor>)
   - [func \(x \*UpdateUserEmailRequest\) GetEmail\(\) string](<#UpdateUserEmailRequest.GetEmail>)
@@ -130,16 +221,25 @@ import "github.com/mtnmunuklu/bavul/pb"
   - [func \(x \*UpdateUserPasswordRequest\) String\(\) string](<#UpdateUserPasswordRequest.String>)
 - [type User](<#User>)
   - [func \(\*User\) Descriptor\(\) \(\[\]byte, \[\]int\)](<#User.Descriptor>)
-  - [func \(x \*User\) GetCreated\(\) int64](<#User.GetCreated>)
+  - [func \(x \*User\) GetCreated\(\) string](<#User.GetCreated>)
   - [func \(x \*User\) GetEmail\(\) string](<#User.GetEmail>)
   - [func \(x \*User\) GetId\(\) string](<#User.GetId>)
   - [func \(x \*User\) GetName\(\) string](<#User.GetName>)
   - [func \(x \*User\) GetRole\(\) string](<#User.GetRole>)
-  - [func \(x \*User\) GetUpdated\(\) int64](<#User.GetUpdated>)
+  - [func \(x \*User\) GetUpdated\(\) string](<#User.GetUpdated>)
   - [func \(\*User\) ProtoMessage\(\)](<#User.ProtoMessage>)
   - [func \(x \*User\) ProtoReflect\(\) protoreflect.Message](<#User.ProtoReflect>)
   - [func \(x \*User\) Reset\(\)](<#User.Reset>)
   - [func \(x \*User\) String\(\) string](<#User.String>)
+- [type VulnServiceClient](<#VulnServiceClient>)
+  - [func NewVulnServiceClient\(cc grpc.ClientConnInterface\) VulnServiceClient](<#NewVulnServiceClient>)
+- [type VulnServiceServer](<#VulnServiceServer>)
+- [type VulnService\_FetchNVDFeedsClient](<#VulnService_FetchNVDFeedsClient>)
+- [type VulnService\_FetchNVDFeedsServer](<#VulnService_FetchNVDFeedsServer>)
+- [type VulnService\_GetAllCVEsClient](<#VulnService_GetAllCVEsClient>)
+- [type VulnService\_GetAllCVEsServer](<#VulnService_GetAllCVEsServer>)
+- [type VulnService\_SearchCVEClient](<#VulnService_SearchCVEClient>)
+- [type VulnService\_SearchCVEServer](<#VulnService_SearchCVEServer>)
 
 
 ## Variables
@@ -205,11 +305,203 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 var File_auth_proto protoreflect.FileDescriptor
 ```
 
+<a name="File_vuln_proto"></a>
+
+```go
+var File_vuln_proto protoreflect.FileDescriptor
+```
+
+<a name="VulnService_ServiceDesc"></a>VulnService\_ServiceDesc is the grpc.ServiceDesc for VulnService service. It's only intended for direct use with grpc.RegisterService, and not to be introspected or modified \(even as a copy\)
+
+```go
+var VulnService_ServiceDesc = grpc.ServiceDesc{
+    ServiceName: "messages.VulnService",
+    HandlerType: (*VulnServiceServer)(nil),
+    Methods: []grpc.MethodDesc{
+        {
+            MethodName: "AddCVE",
+            Handler:    _VulnService_AddCVE_Handler,
+        },
+        {
+            MethodName: "DeleteCVE",
+            Handler:    _VulnService_DeleteCVE_Handler,
+        },
+        {
+            MethodName: "UpdateCVE",
+            Handler:    _VulnService_UpdateCVE_Handler,
+        },
+    },
+    Streams: []grpc.StreamDesc{
+        {
+            StreamName:    "SearchCVE",
+            Handler:       _VulnService_SearchCVE_Handler,
+            ServerStreams: true,
+        },
+        {
+            StreamName:    "GetAllCVEs",
+            Handler:       _VulnService_GetAllCVEs_Handler,
+            ServerStreams: true,
+        },
+        {
+            StreamName:    "FetchNVDFeeds",
+            Handler:       _VulnService_FetchNVDFeeds_Handler,
+            ServerStreams: true,
+        },
+    },
+    Metadata: "vuln.proto",
+}
+```
+
 <a name="RegisterAuthServiceServer"></a>
 ## func [RegisterAuthServiceServer](<https://github.com/mtnmunuklu/bavul/blob/main/pb/auth_grpc.pb.go#L212>)
 
 ```go
 func RegisterAuthServiceServer(s grpc.ServiceRegistrar, srv AuthServiceServer)
+```
+
+
+
+<a name="RegisterVulnServiceServer"></a>
+## func [RegisterVulnServiceServer](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L202>)
+
+```go
+func RegisterVulnServiceServer(s grpc.ServiceRegistrar, srv VulnServiceServer)
+```
+
+
+
+<a name="AddCVERequest"></a>
+## type [AddCVERequest](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L134-L147>)
+
+
+
+```go
+type AddCVERequest struct {
+    CveId       string   `protobuf:"bytes,1,opt,name=cve_id,json=cveId,proto3" json:"cve_id,omitempty"`
+    Description string   `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+    Severity    string   `protobuf:"bytes,3,opt,name=severity,proto3" json:"severity,omitempty"`
+    Product     string   `protobuf:"bytes,4,opt,name=product,proto3" json:"product,omitempty"`
+    Vendor      string   `protobuf:"bytes,5,opt,name=vendor,proto3" json:"vendor,omitempty"`
+    Links       []string `protobuf:"bytes,6,rep,name=links,proto3" json:"links,omitempty"`
+    Published   string   `protobuf:"bytes,7,opt,name=published,proto3" json:"published,omitempty"`
+    Modified    string   `protobuf:"bytes,8,opt,name=modified,proto3" json:"modified,omitempty"`
+    // contains filtered or unexported fields
+}
+```
+
+<a name="AddCVERequest.Descriptor"></a>
+### func \(\*AddCVERequest\) [Descriptor](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L177>)
+
+```go
+func (*AddCVERequest) Descriptor() ([]byte, []int)
+```
+
+Deprecated: Use AddCVERequest.ProtoReflect.Descriptor instead.
+
+<a name="AddCVERequest.GetCveId"></a>
+### func \(\*AddCVERequest\) [GetCveId](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L181>)
+
+```go
+func (x *AddCVERequest) GetCveId() string
+```
+
+
+
+<a name="AddCVERequest.GetDescription"></a>
+### func \(\*AddCVERequest\) [GetDescription](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L188>)
+
+```go
+func (x *AddCVERequest) GetDescription() string
+```
+
+
+
+<a name="AddCVERequest.GetLinks"></a>
+### func \(\*AddCVERequest\) [GetLinks](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L216>)
+
+```go
+func (x *AddCVERequest) GetLinks() []string
+```
+
+
+
+<a name="AddCVERequest.GetModified"></a>
+### func \(\*AddCVERequest\) [GetModified](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L230>)
+
+```go
+func (x *AddCVERequest) GetModified() string
+```
+
+
+
+<a name="AddCVERequest.GetProduct"></a>
+### func \(\*AddCVERequest\) [GetProduct](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L202>)
+
+```go
+func (x *AddCVERequest) GetProduct() string
+```
+
+
+
+<a name="AddCVERequest.GetPublished"></a>
+### func \(\*AddCVERequest\) [GetPublished](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L223>)
+
+```go
+func (x *AddCVERequest) GetPublished() string
+```
+
+
+
+<a name="AddCVERequest.GetSeverity"></a>
+### func \(\*AddCVERequest\) [GetSeverity](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L195>)
+
+```go
+func (x *AddCVERequest) GetSeverity() string
+```
+
+
+
+<a name="AddCVERequest.GetVendor"></a>
+### func \(\*AddCVERequest\) [GetVendor](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L209>)
+
+```go
+func (x *AddCVERequest) GetVendor() string
+```
+
+
+
+<a name="AddCVERequest.ProtoMessage"></a>
+### func \(\*AddCVERequest\) [ProtoMessage](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L162>)
+
+```go
+func (*AddCVERequest) ProtoMessage()
+```
+
+
+
+<a name="AddCVERequest.ProtoReflect"></a>
+### func \(\*AddCVERequest\) [ProtoReflect](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L164>)
+
+```go
+func (x *AddCVERequest) ProtoReflect() protoreflect.Message
+```
+
+
+
+<a name="AddCVERequest.Reset"></a>
+### func \(\*AddCVERequest\) [Reset](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L149>)
+
+```go
+func (x *AddCVERequest) Reset()
+```
+
+
+
+<a name="AddCVERequest.String"></a>
+### func \(\*AddCVERequest\) [String](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L158>)
+
+```go
+func (x *AddCVERequest) String() string
 ```
 
 
@@ -289,6 +581,152 @@ type AuthService_ListUsersServer interface {
 }
 ```
 
+<a name="CVE"></a>
+## type [CVE](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L23-L37>)
+
+
+
+```go
+type CVE struct {
+    Id          string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+    CveId       string   `protobuf:"bytes,2,opt,name=cve_id,json=cveId,proto3" json:"cve_id,omitempty"`
+    Description string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+    Severity    string   `protobuf:"bytes,4,opt,name=severity,proto3" json:"severity,omitempty"`
+    Product     string   `protobuf:"bytes,5,opt,name=product,proto3" json:"product,omitempty"`
+    Vendor      string   `protobuf:"bytes,6,opt,name=vendor,proto3" json:"vendor,omitempty"`
+    Links       []string `protobuf:"bytes,7,rep,name=links,proto3" json:"links,omitempty"`
+    Published   string   `protobuf:"bytes,8,opt,name=published,proto3" json:"published,omitempty"`
+    Modified    string   `protobuf:"bytes,9,opt,name=modified,proto3" json:"modified,omitempty"`
+    // contains filtered or unexported fields
+}
+```
+
+<a name="CVE.Descriptor"></a>
+### func \(\*CVE\) [Descriptor](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L67>)
+
+```go
+func (*CVE) Descriptor() ([]byte, []int)
+```
+
+Deprecated: Use CVE.ProtoReflect.Descriptor instead.
+
+<a name="CVE.GetCveId"></a>
+### func \(\*CVE\) [GetCveId](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L78>)
+
+```go
+func (x *CVE) GetCveId() string
+```
+
+
+
+<a name="CVE.GetDescription"></a>
+### func \(\*CVE\) [GetDescription](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L85>)
+
+```go
+func (x *CVE) GetDescription() string
+```
+
+
+
+<a name="CVE.GetId"></a>
+### func \(\*CVE\) [GetId](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L71>)
+
+```go
+func (x *CVE) GetId() string
+```
+
+
+
+<a name="CVE.GetLinks"></a>
+### func \(\*CVE\) [GetLinks](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L113>)
+
+```go
+func (x *CVE) GetLinks() []string
+```
+
+
+
+<a name="CVE.GetModified"></a>
+### func \(\*CVE\) [GetModified](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L127>)
+
+```go
+func (x *CVE) GetModified() string
+```
+
+
+
+<a name="CVE.GetProduct"></a>
+### func \(\*CVE\) [GetProduct](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L99>)
+
+```go
+func (x *CVE) GetProduct() string
+```
+
+
+
+<a name="CVE.GetPublished"></a>
+### func \(\*CVE\) [GetPublished](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L120>)
+
+```go
+func (x *CVE) GetPublished() string
+```
+
+
+
+<a name="CVE.GetSeverity"></a>
+### func \(\*CVE\) [GetSeverity](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L92>)
+
+```go
+func (x *CVE) GetSeverity() string
+```
+
+
+
+<a name="CVE.GetVendor"></a>
+### func \(\*CVE\) [GetVendor](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L106>)
+
+```go
+func (x *CVE) GetVendor() string
+```
+
+
+
+<a name="CVE.ProtoMessage"></a>
+### func \(\*CVE\) [ProtoMessage](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L52>)
+
+```go
+func (*CVE) ProtoMessage()
+```
+
+
+
+<a name="CVE.ProtoReflect"></a>
+### func \(\*CVE\) [ProtoReflect](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L54>)
+
+```go
+func (x *CVE) ProtoReflect() protoreflect.Message
+```
+
+
+
+<a name="CVE.Reset"></a>
+### func \(\*CVE\) [Reset](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L39>)
+
+```go
+func (x *CVE) Reset()
+```
+
+
+
+<a name="CVE.String"></a>
+### func \(\*CVE\) [String](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L48>)
+
+```go
+func (x *CVE) String() string
+```
+
+
+
 <a name="ChangeUserRoleRequest"></a>
 ## type [ChangeUserRoleRequest](<https://github.com/mtnmunuklu/bavul/blob/main/pb/auth.pb.go#L424-L431>)
 
@@ -361,6 +799,138 @@ func (x *ChangeUserRoleRequest) Reset()
 
 ```go
 func (x *ChangeUserRoleRequest) String() string
+```
+
+
+
+<a name="DeleteCVERequest"></a>
+## type [DeleteCVERequest](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L362-L368>)
+
+
+
+```go
+type DeleteCVERequest struct {
+    CveId string `protobuf:"bytes,1,opt,name=cve_id,json=cveId,proto3" json:"cve_id,omitempty"`
+    // contains filtered or unexported fields
+}
+```
+
+<a name="DeleteCVERequest.Descriptor"></a>
+### func \(\*DeleteCVERequest\) [Descriptor](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L398>)
+
+```go
+func (*DeleteCVERequest) Descriptor() ([]byte, []int)
+```
+
+Deprecated: Use DeleteCVERequest.ProtoReflect.Descriptor instead.
+
+<a name="DeleteCVERequest.GetCveId"></a>
+### func \(\*DeleteCVERequest\) [GetCveId](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L402>)
+
+```go
+func (x *DeleteCVERequest) GetCveId() string
+```
+
+
+
+<a name="DeleteCVERequest.ProtoMessage"></a>
+### func \(\*DeleteCVERequest\) [ProtoMessage](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L383>)
+
+```go
+func (*DeleteCVERequest) ProtoMessage()
+```
+
+
+
+<a name="DeleteCVERequest.ProtoReflect"></a>
+### func \(\*DeleteCVERequest\) [ProtoReflect](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L385>)
+
+```go
+func (x *DeleteCVERequest) ProtoReflect() protoreflect.Message
+```
+
+
+
+<a name="DeleteCVERequest.Reset"></a>
+### func \(\*DeleteCVERequest\) [Reset](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L370>)
+
+```go
+func (x *DeleteCVERequest) Reset()
+```
+
+
+
+<a name="DeleteCVERequest.String"></a>
+### func \(\*DeleteCVERequest\) [String](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L379>)
+
+```go
+func (x *DeleteCVERequest) String() string
+```
+
+
+
+<a name="DeleteCVEResponse"></a>
+## type [DeleteCVEResponse](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L409-L415>)
+
+
+
+```go
+type DeleteCVEResponse struct {
+    CveId string `protobuf:"bytes,1,opt,name=cve_id,json=cveId,proto3" json:"cve_id,omitempty"`
+    // contains filtered or unexported fields
+}
+```
+
+<a name="DeleteCVEResponse.Descriptor"></a>
+### func \(\*DeleteCVEResponse\) [Descriptor](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L445>)
+
+```go
+func (*DeleteCVEResponse) Descriptor() ([]byte, []int)
+```
+
+Deprecated: Use DeleteCVEResponse.ProtoReflect.Descriptor instead.
+
+<a name="DeleteCVEResponse.GetCveId"></a>
+### func \(\*DeleteCVEResponse\) [GetCveId](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L449>)
+
+```go
+func (x *DeleteCVEResponse) GetCveId() string
+```
+
+
+
+<a name="DeleteCVEResponse.ProtoMessage"></a>
+### func \(\*DeleteCVEResponse\) [ProtoMessage](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L430>)
+
+```go
+func (*DeleteCVEResponse) ProtoMessage()
+```
+
+
+
+<a name="DeleteCVEResponse.ProtoReflect"></a>
+### func \(\*DeleteCVEResponse\) [ProtoReflect](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L432>)
+
+```go
+func (x *DeleteCVEResponse) ProtoReflect() protoreflect.Message
+```
+
+
+
+<a name="DeleteCVEResponse.Reset"></a>
+### func \(\*DeleteCVEResponse\) [Reset](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L417>)
+
+```go
+func (x *DeleteCVEResponse) Reset()
+```
+
+
+
+<a name="DeleteCVEResponse.String"></a>
+### func \(\*DeleteCVEResponse\) [String](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L426>)
+
+```go
+func (x *DeleteCVEResponse) String() string
 ```
 
 
@@ -493,6 +1063,128 @@ func (x *DeleteUserResponse) Reset()
 
 ```go
 func (x *DeleteUserResponse) String() string
+```
+
+
+
+<a name="FetchNVDFeedsRequest"></a>
+## type [FetchNVDFeedsRequest](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L559-L565>)
+
+
+
+```go
+type FetchNVDFeedsRequest struct {
+    ApiKey string `protobuf:"bytes,1,opt,name=api_key,json=apiKey,proto3" json:"api_key,omitempty"`
+    // contains filtered or unexported fields
+}
+```
+
+<a name="FetchNVDFeedsRequest.Descriptor"></a>
+### func \(\*FetchNVDFeedsRequest\) [Descriptor](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L595>)
+
+```go
+func (*FetchNVDFeedsRequest) Descriptor() ([]byte, []int)
+```
+
+Deprecated: Use FetchNVDFeedsRequest.ProtoReflect.Descriptor instead.
+
+<a name="FetchNVDFeedsRequest.GetApiKey"></a>
+### func \(\*FetchNVDFeedsRequest\) [GetApiKey](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L599>)
+
+```go
+func (x *FetchNVDFeedsRequest) GetApiKey() string
+```
+
+
+
+<a name="FetchNVDFeedsRequest.ProtoMessage"></a>
+### func \(\*FetchNVDFeedsRequest\) [ProtoMessage](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L580>)
+
+```go
+func (*FetchNVDFeedsRequest) ProtoMessage()
+```
+
+
+
+<a name="FetchNVDFeedsRequest.ProtoReflect"></a>
+### func \(\*FetchNVDFeedsRequest\) [ProtoReflect](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L582>)
+
+```go
+func (x *FetchNVDFeedsRequest) ProtoReflect() protoreflect.Message
+```
+
+
+
+<a name="FetchNVDFeedsRequest.Reset"></a>
+### func \(\*FetchNVDFeedsRequest\) [Reset](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L567>)
+
+```go
+func (x *FetchNVDFeedsRequest) Reset()
+```
+
+
+
+<a name="FetchNVDFeedsRequest.String"></a>
+### func \(\*FetchNVDFeedsRequest\) [String](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L576>)
+
+```go
+func (x *FetchNVDFeedsRequest) String() string
+```
+
+
+
+<a name="GetAllCVEsRequest"></a>
+## type [GetAllCVEsRequest](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L324-L328>)
+
+
+
+```go
+type GetAllCVEsRequest struct {
+    // contains filtered or unexported fields
+}
+```
+
+<a name="GetAllCVEsRequest.Descriptor"></a>
+### func \(\*GetAllCVEsRequest\) [Descriptor](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L358>)
+
+```go
+func (*GetAllCVEsRequest) Descriptor() ([]byte, []int)
+```
+
+Deprecated: Use GetAllCVEsRequest.ProtoReflect.Descriptor instead.
+
+<a name="GetAllCVEsRequest.ProtoMessage"></a>
+### func \(\*GetAllCVEsRequest\) [ProtoMessage](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L343>)
+
+```go
+func (*GetAllCVEsRequest) ProtoMessage()
+```
+
+
+
+<a name="GetAllCVEsRequest.ProtoReflect"></a>
+### func \(\*GetAllCVEsRequest\) [ProtoReflect](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L345>)
+
+```go
+func (x *GetAllCVEsRequest) ProtoReflect() protoreflect.Message
+```
+
+
+
+<a name="GetAllCVEsRequest.Reset"></a>
+### func \(\*GetAllCVEsRequest\) [Reset](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L330>)
+
+```go
+func (x *GetAllCVEsRequest) Reset()
+```
+
+
+
+<a name="GetAllCVEsRequest.String"></a>
+### func \(\*GetAllCVEsRequest\) [String](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L339>)
+
+```go
+func (x *GetAllCVEsRequest) String() string
 ```
 
 
@@ -747,6 +1439,122 @@ func (x *ListUsersRequest) Reset()
 
 ```go
 func (x *ListUsersRequest) String() string
+```
+
+
+
+<a name="SearchCVERequest"></a>
+## type [SearchCVERequest](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L237-L248>)
+
+
+
+```go
+type SearchCVERequest struct {
+    CveId     string `protobuf:"bytes,1,opt,name=cve_id,json=cveId,proto3" json:"cve_id,omitempty"`
+    Severity  string `protobuf:"bytes,2,opt,name=severity,proto3" json:"severity,omitempty"`
+    Product   string `protobuf:"bytes,3,opt,name=product,proto3" json:"product,omitempty"`
+    Vendor    string `protobuf:"bytes,4,opt,name=vendor,proto3" json:"vendor,omitempty"`
+    StartDate string `protobuf:"bytes,5,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
+    EndDate   string `protobuf:"bytes,6,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
+    // contains filtered or unexported fields
+}
+```
+
+<a name="SearchCVERequest.Descriptor"></a>
+### func \(\*SearchCVERequest\) [Descriptor](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L278>)
+
+```go
+func (*SearchCVERequest) Descriptor() ([]byte, []int)
+```
+
+Deprecated: Use SearchCVERequest.ProtoReflect.Descriptor instead.
+
+<a name="SearchCVERequest.GetCveId"></a>
+### func \(\*SearchCVERequest\) [GetCveId](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L282>)
+
+```go
+func (x *SearchCVERequest) GetCveId() string
+```
+
+
+
+<a name="SearchCVERequest.GetEndDate"></a>
+### func \(\*SearchCVERequest\) [GetEndDate](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L317>)
+
+```go
+func (x *SearchCVERequest) GetEndDate() string
+```
+
+
+
+<a name="SearchCVERequest.GetProduct"></a>
+### func \(\*SearchCVERequest\) [GetProduct](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L296>)
+
+```go
+func (x *SearchCVERequest) GetProduct() string
+```
+
+
+
+<a name="SearchCVERequest.GetSeverity"></a>
+### func \(\*SearchCVERequest\) [GetSeverity](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L289>)
+
+```go
+func (x *SearchCVERequest) GetSeverity() string
+```
+
+
+
+<a name="SearchCVERequest.GetStartDate"></a>
+### func \(\*SearchCVERequest\) [GetStartDate](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L310>)
+
+```go
+func (x *SearchCVERequest) GetStartDate() string
+```
+
+
+
+<a name="SearchCVERequest.GetVendor"></a>
+### func \(\*SearchCVERequest\) [GetVendor](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L303>)
+
+```go
+func (x *SearchCVERequest) GetVendor() string
+```
+
+
+
+<a name="SearchCVERequest.ProtoMessage"></a>
+### func \(\*SearchCVERequest\) [ProtoMessage](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L263>)
+
+```go
+func (*SearchCVERequest) ProtoMessage()
+```
+
+
+
+<a name="SearchCVERequest.ProtoReflect"></a>
+### func \(\*SearchCVERequest\) [ProtoReflect](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L265>)
+
+```go
+func (x *SearchCVERequest) ProtoReflect() protoreflect.Message
+```
+
+
+
+<a name="SearchCVERequest.Reset"></a>
+### func \(\*SearchCVERequest\) [Reset](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L250>)
+
+```go
+func (x *SearchCVERequest) Reset()
+```
+
+
+
+<a name="SearchCVERequest.String"></a>
+### func \(\*SearchCVERequest\) [String](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L259>)
+
+```go
+func (x *SearchCVERequest) String() string
 ```
 
 
@@ -1089,6 +1897,70 @@ func (UnimplementedAuthServiceServer) UpdateUserPassword(context.Context, *Updat
 
 
 
+<a name="UnimplementedVulnServiceServer"></a>
+## type [UnimplementedVulnServiceServer](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L173-L174>)
+
+UnimplementedVulnServiceServer should be embedded to have forward compatible implementations.
+
+```go
+type UnimplementedVulnServiceServer struct {
+}
+```
+
+<a name="UnimplementedVulnServiceServer.AddCVE"></a>
+### func \(UnimplementedVulnServiceServer\) [AddCVE](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L176>)
+
+```go
+func (UnimplementedVulnServiceServer) AddCVE(context.Context, *AddCVERequest) (*CVE, error)
+```
+
+
+
+<a name="UnimplementedVulnServiceServer.DeleteCVE"></a>
+### func \(UnimplementedVulnServiceServer\) [DeleteCVE](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L185>)
+
+```go
+func (UnimplementedVulnServiceServer) DeleteCVE(context.Context, *DeleteCVERequest) (*DeleteCVEResponse, error)
+```
+
+
+
+<a name="UnimplementedVulnServiceServer.FetchNVDFeeds"></a>
+### func \(UnimplementedVulnServiceServer\) [FetchNVDFeeds](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L191>)
+
+```go
+func (UnimplementedVulnServiceServer) FetchNVDFeeds(*FetchNVDFeedsRequest, VulnService_FetchNVDFeedsServer) error
+```
+
+
+
+<a name="UnimplementedVulnServiceServer.GetAllCVEs"></a>
+### func \(UnimplementedVulnServiceServer\) [GetAllCVEs](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L182>)
+
+```go
+func (UnimplementedVulnServiceServer) GetAllCVEs(*GetAllCVEsRequest, VulnService_GetAllCVEsServer) error
+```
+
+
+
+<a name="UnimplementedVulnServiceServer.SearchCVE"></a>
+### func \(UnimplementedVulnServiceServer\) [SearchCVE](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L179>)
+
+```go
+func (UnimplementedVulnServiceServer) SearchCVE(*SearchCVERequest, VulnService_SearchCVEServer) error
+```
+
+
+
+<a name="UnimplementedVulnServiceServer.UpdateCVE"></a>
+### func \(UnimplementedVulnServiceServer\) [UpdateCVE](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L188>)
+
+```go
+func (UnimplementedVulnServiceServer) UpdateCVE(context.Context, *UpdateCVERequest) (*CVE, error)
+```
+
+
+
 <a name="UnsafeAuthServiceServer"></a>
 ## type [UnsafeAuthServiceServer](<https://github.com/mtnmunuklu/bavul/blob/main/pb/auth_grpc.pb.go#L208-L210>)
 
@@ -1099,6 +1971,153 @@ type UnsafeAuthServiceServer interface {
     // contains filtered or unexported methods
 }
 ```
+
+<a name="UnsafeVulnServiceServer"></a>
+## type [UnsafeVulnServiceServer](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L198-L200>)
+
+UnsafeVulnServiceServer may be embedded to opt out of forward compatibility for this service. Use of this interface is not recommended, as added methods to VulnServiceServer will result in compilation errors.
+
+```go
+type UnsafeVulnServiceServer interface {
+    // contains filtered or unexported methods
+}
+```
+
+<a name="UpdateCVERequest"></a>
+## type [UpdateCVERequest](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L456-L469>)
+
+
+
+```go
+type UpdateCVERequest struct {
+    CveId       string   `protobuf:"bytes,1,opt,name=cve_id,json=cveId,proto3" json:"cve_id,omitempty"`
+    Description string   `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+    Severity    string   `protobuf:"bytes,3,opt,name=severity,proto3" json:"severity,omitempty"`
+    Product     string   `protobuf:"bytes,4,opt,name=product,proto3" json:"product,omitempty"`
+    Vendor      string   `protobuf:"bytes,5,opt,name=vendor,proto3" json:"vendor,omitempty"`
+    Links       []string `protobuf:"bytes,6,rep,name=links,proto3" json:"links,omitempty"`
+    Published   string   `protobuf:"bytes,7,opt,name=published,proto3" json:"published,omitempty"`
+    Modified    string   `protobuf:"bytes,8,opt,name=modified,proto3" json:"modified,omitempty"`
+    // contains filtered or unexported fields
+}
+```
+
+<a name="UpdateCVERequest.Descriptor"></a>
+### func \(\*UpdateCVERequest\) [Descriptor](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L499>)
+
+```go
+func (*UpdateCVERequest) Descriptor() ([]byte, []int)
+```
+
+Deprecated: Use UpdateCVERequest.ProtoReflect.Descriptor instead.
+
+<a name="UpdateCVERequest.GetCveId"></a>
+### func \(\*UpdateCVERequest\) [GetCveId](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L503>)
+
+```go
+func (x *UpdateCVERequest) GetCveId() string
+```
+
+
+
+<a name="UpdateCVERequest.GetDescription"></a>
+### func \(\*UpdateCVERequest\) [GetDescription](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L510>)
+
+```go
+func (x *UpdateCVERequest) GetDescription() string
+```
+
+
+
+<a name="UpdateCVERequest.GetLinks"></a>
+### func \(\*UpdateCVERequest\) [GetLinks](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L538>)
+
+```go
+func (x *UpdateCVERequest) GetLinks() []string
+```
+
+
+
+<a name="UpdateCVERequest.GetModified"></a>
+### func \(\*UpdateCVERequest\) [GetModified](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L552>)
+
+```go
+func (x *UpdateCVERequest) GetModified() string
+```
+
+
+
+<a name="UpdateCVERequest.GetProduct"></a>
+### func \(\*UpdateCVERequest\) [GetProduct](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L524>)
+
+```go
+func (x *UpdateCVERequest) GetProduct() string
+```
+
+
+
+<a name="UpdateCVERequest.GetPublished"></a>
+### func \(\*UpdateCVERequest\) [GetPublished](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L545>)
+
+```go
+func (x *UpdateCVERequest) GetPublished() string
+```
+
+
+
+<a name="UpdateCVERequest.GetSeverity"></a>
+### func \(\*UpdateCVERequest\) [GetSeverity](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L517>)
+
+```go
+func (x *UpdateCVERequest) GetSeverity() string
+```
+
+
+
+<a name="UpdateCVERequest.GetVendor"></a>
+### func \(\*UpdateCVERequest\) [GetVendor](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L531>)
+
+```go
+func (x *UpdateCVERequest) GetVendor() string
+```
+
+
+
+<a name="UpdateCVERequest.ProtoMessage"></a>
+### func \(\*UpdateCVERequest\) [ProtoMessage](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L484>)
+
+```go
+func (*UpdateCVERequest) ProtoMessage()
+```
+
+
+
+<a name="UpdateCVERequest.ProtoReflect"></a>
+### func \(\*UpdateCVERequest\) [ProtoReflect](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L486>)
+
+```go
+func (x *UpdateCVERequest) ProtoReflect() protoreflect.Message
+```
+
+
+
+<a name="UpdateCVERequest.Reset"></a>
+### func \(\*UpdateCVERequest\) [Reset](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L471>)
+
+```go
+func (x *UpdateCVERequest) Reset()
+```
+
+
+
+<a name="UpdateCVERequest.String"></a>
+### func \(\*UpdateCVERequest\) [String](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln.pb.go#L480>)
+
+```go
+func (x *UpdateCVERequest) String() string
+```
+
+
 
 <a name="UpdateUserEmailRequest"></a>
 ## type [UpdateUserEmailRequest](<https://github.com/mtnmunuklu/bavul/blob/main/pb/auth.pb.go#L636-L644>)
@@ -1369,8 +2388,8 @@ type User struct {
     Name    string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
     Email   string `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
     Role    string `protobuf:"bytes,4,opt,name=role,proto3" json:"role,omitempty"`
-    Created int64  `protobuf:"varint,5,opt,name=created,proto3" json:"created,omitempty"`
-    Updated int64  `protobuf:"varint,6,opt,name=updated,proto3" json:"updated,omitempty"`
+    Created string `protobuf:"bytes,5,opt,name=created,proto3" json:"created,omitempty"`
+    Updated string `protobuf:"bytes,6,opt,name=updated,proto3" json:"updated,omitempty"`
     // contains filtered or unexported fields
 }
 ```
@@ -1388,7 +2407,7 @@ Deprecated: Use User.ProtoReflect.Descriptor instead.
 ### func \(\*User\) [GetCreated](<https://github.com/mtnmunuklu/bavul/blob/main/pb/auth.pb.go#L96>)
 
 ```go
-func (x *User) GetCreated() int64
+func (x *User) GetCreated() string
 ```
 
 
@@ -1433,7 +2452,7 @@ func (x *User) GetRole() string
 ### func \(\*User\) [GetUpdated](<https://github.com/mtnmunuklu/bavul/blob/main/pb/auth.pb.go#L103>)
 
 ```go
-func (x *User) GetUpdated() int64
+func (x *User) GetUpdated() string
 ```
 
 
@@ -1473,5 +2492,120 @@ func (x *User) String() string
 ```
 
 
+
+<a name="VulnServiceClient"></a>
+## type [VulnServiceClient](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L20-L27>)
+
+VulnServiceClient is the client API for VulnService service.
+
+For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+
+```go
+type VulnServiceClient interface {
+    AddCVE(ctx context.Context, in *AddCVERequest, opts ...grpc.CallOption) (*CVE, error)
+    SearchCVE(ctx context.Context, in *SearchCVERequest, opts ...grpc.CallOption) (VulnService_SearchCVEClient, error)
+    GetAllCVEs(ctx context.Context, in *GetAllCVEsRequest, opts ...grpc.CallOption) (VulnService_GetAllCVEsClient, error)
+    DeleteCVE(ctx context.Context, in *DeleteCVERequest, opts ...grpc.CallOption) (*DeleteCVEResponse, error)
+    UpdateCVE(ctx context.Context, in *UpdateCVERequest, opts ...grpc.CallOption) (*CVE, error)
+    FetchNVDFeeds(ctx context.Context, in *FetchNVDFeedsRequest, opts ...grpc.CallOption) (VulnService_FetchNVDFeedsClient, error)
+}
+```
+
+<a name="NewVulnServiceClient"></a>
+### func [NewVulnServiceClient](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L33>)
+
+```go
+func NewVulnServiceClient(cc grpc.ClientConnInterface) VulnServiceClient
+```
+
+
+
+<a name="VulnServiceServer"></a>
+## type [VulnServiceServer](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L163-L170>)
+
+VulnServiceServer is the server API for VulnService service. All implementations should embed UnimplementedVulnServiceServer for forward compatibility
+
+```go
+type VulnServiceServer interface {
+    AddCVE(context.Context, *AddCVERequest) (*CVE, error)
+    SearchCVE(*SearchCVERequest, VulnService_SearchCVEServer) error
+    GetAllCVEs(*GetAllCVEsRequest, VulnService_GetAllCVEsServer) error
+    DeleteCVE(context.Context, *DeleteCVERequest) (*DeleteCVEResponse, error)
+    UpdateCVE(context.Context, *UpdateCVERequest) (*CVE, error)
+    FetchNVDFeeds(*FetchNVDFeedsRequest, VulnService_FetchNVDFeedsServer) error
+}
+```
+
+<a name="VulnService_FetchNVDFeedsClient"></a>
+## type [VulnService\\\_FetchNVDFeedsClient](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L143-L146>)
+
+
+
+```go
+type VulnService_FetchNVDFeedsClient interface {
+    Recv() (*CVE, error)
+    grpc.ClientStream
+}
+```
+
+<a name="VulnService_FetchNVDFeedsServer"></a>
+## type [VulnService\\\_FetchNVDFeedsServer](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L310-L313>)
+
+
+
+```go
+type VulnService_FetchNVDFeedsServer interface {
+    Send(*CVE) error
+    grpc.ServerStream
+}
+```
+
+<a name="VulnService_GetAllCVEsClient"></a>
+## type [VulnService\\\_GetAllCVEsClient](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L93-L96>)
+
+
+
+```go
+type VulnService_GetAllCVEsClient interface {
+    Recv() (*CVE, error)
+    grpc.ClientStream
+}
+```
+
+<a name="VulnService_GetAllCVEsServer"></a>
+## type [VulnService\\\_GetAllCVEsServer](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L253-L256>)
+
+
+
+```go
+type VulnService_GetAllCVEsServer interface {
+    Send(*CVE) error
+    grpc.ServerStream
+}
+```
+
+<a name="VulnService_SearchCVEClient"></a>
+## type [VulnService\\\_SearchCVEClient](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L61-L64>)
+
+
+
+```go
+type VulnService_SearchCVEClient interface {
+    Recv() (*CVE, error)
+    grpc.ClientStream
+}
+```
+
+<a name="VulnService_SearchCVEServer"></a>
+## type [VulnService\\\_SearchCVEServer](<https://github.com/mtnmunuklu/bavul/blob/main/pb/vuln_grpc.pb.go#L232-L235>)
+
+
+
+```go
+type VulnService_SearchCVEServer interface {
+    Send(*CVE) error
+    grpc.ServerStream
+}
+```
 
 Generated by [gomarkdoc](<https://github.com/princjef/gomarkdoc>)

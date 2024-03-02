@@ -18,111 +18,11 @@ import "github.com/mtnmunuklu/bavul/api/handlers"
 
 ## Index
 
-- [type AHandlers](<#AHandlers>)
-  - [func \(h \*AHandlers\) ChangeUserRole\(w http.ResponseWriter, r \*http.Request\)](<#AHandlers.ChangeUserRole>)
-  - [func \(h \*AHandlers\) DeleteUser\(w http.ResponseWriter, r \*http.Request\)](<#AHandlers.DeleteUser>)
-  - [func \(h \*AHandlers\) GetUser\(w http.ResponseWriter, r \*http.Request\)](<#AHandlers.GetUser>)
-  - [func \(h \*AHandlers\) GetUsers\(w http.ResponseWriter, r \*http.Request\)](<#AHandlers.GetUsers>)
-  - [func \(h \*AHandlers\) SignIn\(w http.ResponseWriter, r \*http.Request\)](<#AHandlers.SignIn>)
-  - [func \(h \*AHandlers\) SignUp\(w http.ResponseWriter, r \*http.Request\)](<#AHandlers.SignUp>)
-  - [func \(h \*AHandlers\) UpdateUserEmail\(w http.ResponseWriter, r \*http.Request\)](<#AHandlers.UpdateUserEmail>)
-  - [func \(h \*AHandlers\) UpdateUserName\(w http.ResponseWriter, r \*http.Request\)](<#AHandlers.UpdateUserName>)
-  - [func \(h \*AHandlers\) UpdateUserPassword\(w http.ResponseWriter, r \*http.Request\)](<#AHandlers.UpdateUserPassword>)
 - [type AuthHandlers](<#AuthHandlers>)
   - [func NewAuthHandlers\(authSvcClient pb.AuthServiceClient\) AuthHandlers](<#NewAuthHandlers>)
+- [type VulnHandlers](<#VulnHandlers>)
+  - [func NewVulnHandlers\(authSvcClient pb.AuthServiceClient, vulnSvcClient pb.VulnServiceClient\) VulnHandlers](<#NewVulnHandlers>)
 
-
-<a name="AHandlers"></a>
-## type [AHandlers](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/auth.go#L27-L29>)
-
-AHandlers provides a connection with authentication service over proto buffer.
-
-```go
-type AHandlers struct {
-    // contains filtered or unexported fields
-}
-```
-
-<a name="AHandlers.ChangeUserRole"></a>
-### func \(\*AHandlers\) [ChangeUserRole](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/auth.go#L167>)
-
-```go
-func (h *AHandlers) ChangeUserRole(w http.ResponseWriter, r *http.Request)
-```
-
-ChangeUserRole performs change the user role.
-
-<a name="AHandlers.DeleteUser"></a>
-### func \(\*AHandlers\) [DeleteUser](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/auth.go#L132>)
-
-```go
-func (h *AHandlers) DeleteUser(w http.ResponseWriter, r *http.Request)
-```
-
-DeleteUser performs delete the user by email.
-
-<a name="AHandlers.GetUser"></a>
-### func \(\*AHandlers\) [GetUser](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/auth.go#L97>)
-
-```go
-func (h *AHandlers) GetUser(w http.ResponseWriter, r *http.Request)
-```
-
-GetUser performs return the user by email.
-
-<a name="AHandlers.GetUsers"></a>
-### func \(\*AHandlers\) [GetUsers](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/auth.go#L307>)
-
-```go
-func (h *AHandlers) GetUsers(w http.ResponseWriter, r *http.Request)
-```
-
-GetUsers lists all users.
-
-<a name="AHandlers.SignIn"></a>
-### func \(\*AHandlers\) [SignIn](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/auth.go#L67>)
-
-```go
-func (h *AHandlers) SignIn(w http.ResponseWriter, r *http.Request)
-```
-
-SignIn performs the user login process.
-
-<a name="AHandlers.SignUp"></a>
-### func \(\*AHandlers\) [SignUp](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/auth.go#L37>)
-
-```go
-func (h *AHandlers) SignUp(w http.ResponseWriter, r *http.Request)
-```
-
-SignUp performs the user registration process.
-
-<a name="AHandlers.UpdateUserEmail"></a>
-### func \(\*AHandlers\) [UpdateUserEmail](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/auth.go#L247>)
-
-```go
-func (h *AHandlers) UpdateUserEmail(w http.ResponseWriter, r *http.Request)
-```
-
-UpdateUser performs update the user email.
-
-<a name="AHandlers.UpdateUserName"></a>
-### func \(\*AHandlers\) [UpdateUserName](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/auth.go#L277>)
-
-```go
-func (h *AHandlers) UpdateUserName(w http.ResponseWriter, r *http.Request)
-```
-
-UpdateUser performs update the user name.
-
-<a name="AHandlers.UpdateUserPassword"></a>
-### func \(\*AHandlers\) [UpdateUserPassword](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/auth.go#L217>)
-
-```go
-func (h *AHandlers) UpdateUserPassword(w http.ResponseWriter, r *http.Request)
-```
-
-UpdateUser performs update the user password.
 
 <a name="AuthHandlers"></a>
 ## type [AuthHandlers](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/auth.go#L14-L24>)
@@ -131,15 +31,15 @@ AuthHandlers is the interface of the authentication operation.
 
 ```go
 type AuthHandlers interface {
-    SignUp(w http.ResponseWriter, r *http.Request)
-    SignIn(w http.ResponseWriter, r *http.Request)
-    GetUser(w http.ResponseWriter, r *http.Request)
-    DeleteUser(w http.ResponseWriter, r *http.Request)
-    ChangeUserRole(w http.ResponseWriter, r *http.Request)
-    UpdateUserPassword(w http.ResponseWriter, r *http.Request)
-    UpdateUserEmail(w http.ResponseWriter, r *http.Request)
-    UpdateUserName(w http.ResponseWriter, r *http.Request)
-    GetUsers(w http.ResponseWriter, r *http.Request)
+    SignUp(c *fiber.Ctx) error
+    SignIn(c *fiber.Ctx) error
+    GetUser(c *fiber.Ctx) error
+    DeleteUser(c *fiber.Ctx) error
+    ChangeUserRole(c *fiber.Ctx) error
+    UpdateUserPassword(c *fiber.Ctx) error
+    UpdateUserEmail(c *fiber.Ctx) error
+    UpdateUserName(c *fiber.Ctx) error
+    ListUsers(c *fiber.Ctx) error
 }
 ```
 
@@ -152,6 +52,31 @@ func NewAuthHandlers(authSvcClient pb.AuthServiceClient) AuthHandlers
 
 NewAuthHandlers creates a new AuthHandlers instance.
 
+<a name="VulnHandlers"></a>
+## type [VulnHandlers](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/vuln.go#L15-L22>)
+
+VulnHandlers is the interface of the vulnerability operation.
+
+```go
+type VulnHandlers interface {
+    AddCVE(c *fiber.Ctx) error
+    SearchCVE(c *fiber.Ctx) error
+    GetAllCVEs(c *fiber.Ctx) error
+    DeleteCVE(c *fiber.Ctx) error
+    UpdateCVE(c *fiber.Ctx) error
+    FetchNVDFeeds(c *fiber.Ctx) error
+}
+```
+
+<a name="NewVulnHandlers"></a>
+### func [NewVulnHandlers](<https://github.com/mtnmunuklu/bavul/blob/main/api/handlers/vuln.go#L31>)
+
+```go
+func NewVulnHandlers(authSvcClient pb.AuthServiceClient, vulnSvcClient pb.VulnServiceClient) VulnHandlers
+```
+
+NewAuthHandlers creates a new VulnHandlers instance.
+
 # middlewares
 
 ```go
@@ -160,27 +85,17 @@ import "github.com/mtnmunuklu/bavul/api/middlewares"
 
 ## Index
 
-- [func Authenticate\(next http.HandlerFunc\) http.HandlerFunc](<#Authenticate>)
-- [func LogRequests\(next http.HandlerFunc\) http.HandlerFunc](<#LogRequests>)
+- [func Authenticate\(next fiber.Handler\) fiber.Handler](<#Authenticate>)
 
 
 <a name="Authenticate"></a>
-## func [Authenticate](<https://github.com/mtnmunuklu/bavul/blob/main/api/middlewares/middlewares.go#L22>)
+## func [Authenticate](<https://github.com/mtnmunuklu/bavul/blob/main/api/middlewares/middlewares.go#L12>)
 
 ```go
-func Authenticate(next http.HandlerFunc) http.HandlerFunc
+func Authenticate(next fiber.Handler) fiber.Handler
 ```
 
-Authenticate provides the authentication process.
-
-<a name="LogRequests"></a>
-## func [LogRequests](<https://github.com/mtnmunuklu/bavul/blob/main/api/middlewares/middlewares.go#L13>)
-
-```go
-func LogRequests(next http.HandlerFunc) http.HandlerFunc
-```
-
-LogRequests provides logging of incoming requests.
+Authenticate provides the authentication process middleware.
 
 # routes
 
@@ -190,32 +105,23 @@ import "github.com/mtnmunuklu/bavul/api/routes"
 
 ## Index
 
-- [func Install\(router \*mux.Router, routeList \[\]\*Route\)](<#Install>)
-- [func WithCORS\(router \*mux.Router\) http.Handler](<#WithCORS>)
+- [func Install\(app \*fiber.App, routeList \[\]\*Route\)](<#Install>)
 - [type Route](<#Route>)
   - [func NewAuthRoutes\(authHandlers handlers.AuthHandlers\) \[\]\*Route](<#NewAuthRoutes>)
+  - [func NewVulnRoutes\(vulnHandlers handlers.VulnHandlers\) \[\]\*Route](<#NewVulnRoutes>)
 
 
 <a name="Install"></a>
-## func [Install](<https://github.com/mtnmunuklu/bavul/blob/main/api/routes/routes.go#L21>)
+## func [Install](<https://github.com/mtnmunuklu/bavul/blob/main/api/routes/routes.go#L17>)
 
 ```go
-func Install(router *mux.Router, routeList []*Route)
+func Install(app *fiber.App, routeList []*Route)
 ```
 
 Install registers a new route with a matcher for the URL path.
 
-<a name="WithCORS"></a>
-## func [WithCORS](<https://github.com/mtnmunuklu/bavul/blob/main/api/routes/routes.go#L38>)
-
-```go
-func WithCORS(router *mux.Router) http.Handler
-```
-
-WithCORS provides Cross\-Origin Resource Sharing middleware.
-
 <a name="Route"></a>
-## type [Route](<https://github.com/mtnmunuklu/bavul/blob/main/api/routes/routes.go#L13-L18>)
+## type [Route](<https://github.com/mtnmunuklu/bavul/blob/main/api/routes/routes.go#L9-L14>)
 
 Route provides the route instance for routing operation.
 
@@ -223,19 +129,28 @@ Route provides the route instance for routing operation.
 type Route struct {
     Method       string
     Path         string
-    Handler      http.HandlerFunc
+    Handler      fiber.Handler
     AuthRequired bool
 }
 ```
 
 <a name="NewAuthRoutes"></a>
-### func [NewAuthRoutes](<https://github.com/mtnmunuklu/bavul/blob/main/api/routes/auth.go#L10>)
+### func [NewAuthRoutes](<https://github.com/mtnmunuklu/bavul/blob/main/api/routes/auth.go#L11>)
 
 ```go
 func NewAuthRoutes(authHandlers handlers.AuthHandlers) []*Route
 ```
 
 NewAuthRoutes provides the routing process for authentication.
+
+<a name="NewVulnRoutes"></a>
+### func [NewVulnRoutes](<https://github.com/mtnmunuklu/bavul/blob/main/api/routes/vuln.go#L11>)
+
+```go
+func NewVulnRoutes(vulnHandlers handlers.VulnHandlers) []*Route
+```
+
+NewVulnRoutes provides the routing process for vulnerability.
 
 # util
 
@@ -247,21 +162,23 @@ import "github.com/mtnmunuklu/bavul/api/util"
 
 - [Variables](<#variables>)
 - [func CheckUserIsAdmin\(role string\) bool](<#CheckUserIsAdmin>)
-- [func GetUserIdFromToken\(r \*http.Request\) \(string, error\)](<#GetUserIdFromToken>)
-- [func WriteAsJson\(w http.ResponseWriter, statusCode int, data interface\{\}\)](<#WriteAsJson>)
-- [func WriteError\(w http.ResponseWriter, statusCode int, err error\)](<#WriteError>)
+- [func GetFromCache\(key string\) \(interface\{\}, bool\)](<#GetFromCache>)
+- [func GetUserIDFromToken\(c \*fiber.Ctx\) \(string, error\)](<#GetUserIDFromToken>)
+- [func SetToCache\(key string, value interface\{\}, expiration time.Duration\)](<#SetToCache>)
+- [func WriteAsJSON\(c \*fiber.Ctx, statusCode int, data interface\{\}\) error](<#WriteAsJSON>)
+- [func WriteError\(c \*fiber.Ctx, statusCode int, err error\) error](<#WriteError>)
 - [type JError](<#JError>)
 
 
 ## Variables
 
-<a name="ErrEmptyBody"></a>Contains error codes for api.
+<a name="ErrEmptyBody"></a>Contains error codes for API.
 
 ```go
 var (
     ErrEmptyBody    = errors.New("body can't be empty")
     ErrEmptyHeader  = errors.New("header can't be empty")
-    ErrExistURL     = errors.New("url already exist")
+    ErrExistURL     = errors.New("URL already exists")
     ErrUnauthorized = errors.New("unauthorized operation")
 )
 ```
@@ -273,39 +190,57 @@ var (
 func CheckUserIsAdmin(role string) bool
 ```
 
-CheckUserIsAdmin checks if user is admin.
+CheckUserIsAdmin checks if the user is an admin.
 
-<a name="GetUserIdFromToken"></a>
-## func [GetUserIdFromToken](<https://github.com/mtnmunuklu/bavul/blob/main/api/util/util.go#L41>)
-
-```go
-func GetUserIdFromToken(r *http.Request) (string, error)
-```
-
-GetUserIdFromToken provides return the user id in the token.
-
-<a name="WriteAsJson"></a>
-## func [WriteAsJson](<https://github.com/mtnmunuklu/bavul/blob/main/api/util/util.go#L25>)
+<a name="GetFromCache"></a>
+## func [GetFromCache](<https://github.com/mtnmunuklu/bavul/blob/main/api/util/util.go#L63>)
 
 ```go
-func WriteAsJson(w http.ResponseWriter, statusCode int, data interface{})
+func GetFromCache(key string) (interface{}, bool)
 ```
 
-WriteAsJson provides return the response in json format.
+
+
+<a name="GetUserIDFromToken"></a>
+## func [GetUserIDFromToken](<https://github.com/mtnmunuklu/bavul/blob/main/api/util/util.go#L41>)
+
+```go
+func GetUserIDFromToken(c *fiber.Ctx) (string, error)
+```
+
+GetUserIDFromToken returns the user ID from the token.
+
+<a name="SetToCache"></a>
+## func [SetToCache](<https://github.com/mtnmunuklu/bavul/blob/main/api/util/util.go#L67>)
+
+```go
+func SetToCache(key string, value interface{}, expiration time.Duration)
+```
+
+
+
+<a name="WriteAsJSON"></a>
+## func [WriteAsJSON](<https://github.com/mtnmunuklu/bavul/blob/main/api/util/util.go#L26>)
+
+```go
+func WriteAsJSON(c *fiber.Ctx, statusCode int, data interface{}) error
+```
+
+WriteAsJSON writes the response in JSON format.
 
 <a name="WriteError"></a>
 ## func [WriteError](<https://github.com/mtnmunuklu/bavul/blob/main/api/util/util.go#L32>)
 
 ```go
-func WriteError(w http.ResponseWriter, statusCode int, err error)
+func WriteError(c *fiber.Ctx, statusCode int, err error) error
 ```
 
-WriteError provides return the related error in json format.
+WriteError writes the error response in JSON format.
 
 <a name="JError"></a>
-## type [JError](<https://github.com/mtnmunuklu/bavul/blob/main/api/util/util.go#L20-L22>)
+## type [JError](<https://github.com/mtnmunuklu/bavul/blob/main/api/util/util.go#L21-L23>)
 
-Error
+JError represents an error structure.
 
 ```go
 type JError struct {

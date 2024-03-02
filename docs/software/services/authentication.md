@@ -19,12 +19,12 @@ import "github.com/mtnmunuklu/bavul/authentication/models"
 ## Index
 
 - [type User](<#User>)
-  - [func \(u \*User\) FromProtoBuffer\(user \*pb.User\)](<#User.FromProtoBuffer>)
-  - [func \(u \*User\) ToProtoBuffer\(\) \*pb.User](<#User.ToProtoBuffer>)
+  - [func \(u \*User\) FromProto\(user \*pb.User\)](<#User.FromProto>)
+  - [func \(u \*User\) ToProto\(\) \*pb.User](<#User.ToProto>)
 
 
 <a name="User"></a>
-## type [User](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/models/users.go#L12-L20>)
+## type [User](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/models/user.go#L13-L21>)
 
 User provides the user instance for authentication job.
 
@@ -40,23 +40,23 @@ type User struct {
 }
 ```
 
-<a name="User.FromProtoBuffer"></a>
-### func \(\*User\) [FromProtoBuffer](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/models/users.go#L35>)
+<a name="User.FromProto"></a>
+### func \(\*User\) [FromProto](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/models/user.go#L36>)
 
 ```go
-func (u *User) FromProtoBuffer(user *pb.User)
+func (u *User) FromProto(user *pb.User)
 ```
 
-FromProtoBuffer gets user from protocol buffer and converts to the user structure.
+FromProto gets user from protocol buffer and converts to the user structure.
 
-<a name="User.ToProtoBuffer"></a>
-### func \(\*User\) [ToProtoBuffer](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/models/users.go#L23>)
+<a name="User.ToProto"></a>
+### func \(\*User\) [ToProto](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/models/user.go#L24>)
 
 ```go
-func (u *User) ToProtoBuffer() *pb.User
+func (u *User) ToProto() *pb.User
 ```
 
-ToProtoBuffer converts the user structure into a protocol buffer user structure.
+ToProto converts the user structure into a protocol buffer user structure.
 
 # repository
 
@@ -67,107 +67,25 @@ import "github.com/mtnmunuklu/bavul/authentication/repository"
 ## Index
 
 - [Constants](<#constants>)
-- [type URepository](<#URepository>)
-  - [func \(r \*URepository\) DeleteAll\(\) error](<#URepository.DeleteAll>)
-  - [func \(r \*URepository\) DeleteById\(id string\) error](<#URepository.DeleteById>)
-  - [func \(r \*URepository\) GetAll\(\) \(user \[\]\*models.User, err error\)](<#URepository.GetAll>)
-  - [func \(r \*URepository\) GetByEmail\(email string\) \(user \*models.User, err error\)](<#URepository.GetByEmail>)
-  - [func \(r \*URepository\) GetById\(id string\) \(user \*models.User, err error\)](<#URepository.GetById>)
-  - [func \(r \*URepository\) Save\(user \*models.User\) error](<#URepository.Save>)
-  - [func \(r \*URepository\) Update\(user \*models.User\) error](<#URepository.Update>)
-- [type UsersRepository](<#UsersRepository>)
-  - [func NewUsersRepository\(conn db.Connection\) UsersRepository](<#NewUsersRepository>)
+- [type UserRepository](<#UserRepository>)
+  - [func NewUserRepository\(conn db.Connection\) UserRepository](<#NewUserRepository>)
 
 
 ## Constants
 
-<a name="UsersCollection"></a>
+<a name="UserCollection"></a>
 
 ```go
-const UsersCollection = "users"
+const UserCollection = "users"
 ```
 
-<a name="URepository"></a>
-## type [URepository](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/repository/users.go#L24-L26>)
+<a name="UserRepository"></a>
+## type [UserRepository](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/repository/user.go#L14-L21>)
 
-URepository provides a mongo collection for database job.
-
-```go
-type URepository struct {
-    // contains filtered or unexported fields
-}
-```
-
-<a name="URepository.DeleteAll"></a>
-### func \(\*URepository\) [DeleteAll](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/repository/users.go#L67>)
+UserRepository is the interface of the authentication backend.
 
 ```go
-func (r *URepository) DeleteAll() error
-```
-
-DeleteAll drops users collection.
-
-<a name="URepository.DeleteById"></a>
-### func \(\*URepository\) [DeleteById](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/repository/users.go#L62>)
-
-```go
-func (r *URepository) DeleteById(id string) error
-```
-
-Delete deletes the user based on id.
-
-<a name="URepository.GetAll"></a>
-### func \(\*URepository\) [GetAll](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/repository/users.go#L51>)
-
-```go
-func (r *URepository) GetAll() (user []*models.User, err error)
-```
-
-GetAll returns all users.
-
-<a name="URepository.GetByEmail"></a>
-### func \(\*URepository\) [GetByEmail](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/repository/users.go#L45>)
-
-```go
-func (r *URepository) GetByEmail(email string) (user *models.User, err error)
-```
-
-GetByEmail returns the user based on email.
-
-<a name="URepository.GetById"></a>
-### func \(\*URepository\) [GetById](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/repository/users.go#L39>)
-
-```go
-func (r *URepository) GetById(id string) (user *models.User, err error)
-```
-
-GetById returns the user based on id.
-
-<a name="URepository.Save"></a>
-### func \(\*URepository\) [Save](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/repository/users.go#L34>)
-
-```go
-func (r *URepository) Save(user *models.User) error
-```
-
-Save creates a user.
-
-<a name="URepository.Update"></a>
-### func \(\*URepository\) [Update](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/repository/users.go#L57>)
-
-```go
-func (r *URepository) Update(user *models.User) error
-```
-
-Update updates the user.
-
-<a name="UsersRepository"></a>
-## type [UsersRepository](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/repository/users.go#L14-L21>)
-
-UsersRepository is the interface of the authentication backend.
-
-```go
-type UsersRepository interface {
+type UserRepository interface {
     Save(user *models.User) error
     GetById(id string) (user *models.User, err error)
     GetByEmail(email string) (user *models.User, err error)
@@ -177,14 +95,14 @@ type UsersRepository interface {
 }
 ```
 
-<a name="NewUsersRepository"></a>
-### func [NewUsersRepository](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/repository/users.go#L29>)
+<a name="NewUserRepository"></a>
+### func [NewUserRepository](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/repository/user.go#L29>)
 
 ```go
-func NewUsersRepository(conn db.Connection) UsersRepository
+func NewUserRepository(conn db.Connection) UserRepository
 ```
 
-NewUsersRepository creates a new UsersRepository instance.
+NewUserRepository creates a new UserRepository instance.
 
 # service
 
@@ -194,7 +112,7 @@ import "github.com/mtnmunuklu/bavul/authentication/service"
 
 ## Index
 
-- [func NewAuthService\(usersRepository repository.UsersRepository\) pb.AuthServiceServer](<#NewAuthService>)
+- [func NewAuthService\(userRepository repository.UserRepository\) pb.AuthServiceServer](<#NewAuthService>)
 - [type AuthService](<#AuthService>)
   - [func \(s \*AuthService\) ChangeUserRole\(ctx context.Context, req \*pb.ChangeUserRoleRequest\) \(\*pb.User, error\)](<#AuthService.ChangeUserRole>)
   - [func \(s \*AuthService\) DeleteUser\(ctx context.Context, req \*pb.DeleteUserRequest\) \(\*pb.DeleteUserResponse, error\)](<#AuthService.DeleteUser>)
@@ -212,7 +130,7 @@ import "github.com/mtnmunuklu/bavul/authentication/service"
 ## func [NewAuthService](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/service/service.go#L24>)
 
 ```go
-func NewAuthService(usersRepository repository.UsersRepository) pb.AuthServiceServer
+func NewAuthService(userRepository repository.UserRepository) pb.AuthServiceServer
 ```
 
 NewAuthService creates a new AuthService instance.
@@ -327,7 +245,9 @@ import "github.com/mtnmunuklu/bavul/authentication/util"
 ## Index
 
 - [Variables](<#variables>)
+- [func FormatTime\(t time.Time\) string](<#FormatTime>)
 - [func NormalizeEmail\(email string\) string](<#NormalizeEmail>)
+- [func ParseTime\(dateStr string\) time.Time](<#ParseTime>)
 - [func ValidateSignUp\(user \*pb.SignUpRequest\) error](<#ValidateSignUp>)
 
 
@@ -357,8 +277,17 @@ var (
 )
 ```
 
+<a name="FormatTime"></a>
+## func [FormatTime](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/util/util.go#L59>)
+
+```go
+func FormatTime(t time.Time) string
+```
+
+
+
 <a name="NormalizeEmail"></a>
-## func [NormalizeEmail](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/util/util.go#L45>)
+## func [NormalizeEmail](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/util/util.go#L46>)
 
 ```go
 func NormalizeEmail(email string) string
@@ -366,8 +295,17 @@ func NormalizeEmail(email string) string
 
 NormalizeEmail normalizes the user email address.
 
+<a name="ParseTime"></a>
+## func [ParseTime](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/util/util.go#L50>)
+
+```go
+func ParseTime(dateStr string) time.Time
+```
+
+
+
 <a name="ValidateSignUp"></a>
-## func [ValidateSignUp](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/util/util.go#L32>)
+## func [ValidateSignUp](<https://github.com/mtnmunuklu/bavul/blob/main/authentication/util/util.go#L33>)
 
 ```go
 func ValidateSignUp(user *pb.SignUpRequest) error
